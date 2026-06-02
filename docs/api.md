@@ -36,6 +36,98 @@ implemented APIs.
 | Dependency-expanded retrieval | `VectorMap.search_dependency(query_vector, relation_types=..., hops=1)` | Expand through relations or local context. |
 | Cross-modal pairing | `VectorMap.search_modal(query_vectors, modality_weights=...)` | Fuse image, text, or other modality vectors. |
 
+## Implemented API Surface
+
+The table below groups the concrete Python methods by system responsibility.
+It is meant to show that the paper-level abstraction is backed by a concrete
+implementation: Violas supports object lifecycle management, index
+construction, relation maintenance, inspection, and multiple query modes.
+
+### Create / Insert
+
+| API | Purpose |
+| --- | --- |
+| `VectorMap.create_group(key, vectors, descriptions, ...)` | Create and register a semantic group from member objects. |
+| `VectorMap.insert(key, group, metadata=None)` | Register an existing `VectorGroup` under a semantic key. |
+| `VectorMap.insert_object(key, vector, description=None, ...)` | Insert one object and return a `VectorRef`. |
+| `VectorMap.add_vector(vector, description)` | Append one object to an existing group. |
+| `VectorMap.add_vector_list(vectors, descriptions)` | Batch append objects and create context ids. |
+
+### Read / Access
+
+| API | Purpose |
+| --- | --- |
+| `VectorMap.get(key, return_type="all")` | Read stored data, metadata, or groups for one key. |
+| `VectorMap.get_all_keys()` | List stored semantic keys. |
+| `VectorMap.get_group_by_name(key, group_name)` | Retrieve one group by name. |
+| `VectorMap.get_group_by_id(key, group_id)` | Retrieve one group by id. |
+
+### Update / Move
+
+| API | Purpose |
+| --- | --- |
+| `VectorMap.update(ref, vector=None, description=None)` | Update one stored object's embedding or metadata. |
+| `VectorMap.assign(ref, key, group_name=None)` | Move one object to another semantic group. |
+
+### Delete
+
+| API | Purpose |
+| --- | --- |
+| `VectorMap.delete(ref)` | Delete one stored object. |
+
+### Index Management
+
+| API | Purpose |
+| --- | --- |
+| `VectorMap.build_index()` | Build available local search indexes. |
+| `VectorMap.build_rep_index()` | Build the representative-vector index. |
+| `VectorMap.build_single_index()` | Build the member-vector index. |
+| `VectorMap.set_key_vectors(key_vectors)` | Attach semantic vectors to keys. |
+| `VectorMap.set_key_vectors_from_predictor(predictor)` | Load semantic key vectors from a predictor object. |
+| `VectorMap.get_key_vector(key)` | Resolve a key vector, including clustered key prefixes. |
+| `VectorMap.create_cluster(key, group, alpha=0.5)` | Create micro-clusters under a semantic entity. |
+| `VectorMap.insert_with_auto_cluster(key, group, alpha=0.5)` | Insert a group after automatic micro-clustering. |
+| `VectorMap.build_hdmg(embedding_k=16, semantic_intra_k=4, ...)` | Build the HDMG index over vector groups and micro-clusters. |
+| `VectorMap.get_last_hdmg_search_stats()` | Inspect the previous HDMG query traversal. |
+
+### Relations and Context
+
+| API | Purpose |
+| --- | --- |
+| `VectorRef` | Address one object by key, group, and vector index. |
+| `VectorRelation` | Store typed links between object references. |
+| `VectorMap.add_relation(source, target, relation_type, ...)` | Add an object-level dependency relation. |
+| `VectorMap.remove_relation(source, target=None, relation_type=None)` | Remove object-level relations. |
+| `VectorMap.add_pair_relation(key, group1_id, group2_id, ...)` | Link paired groups such as image-caption groups. |
+| `VectorMap.add_tree_relation(key, parent_name, child_name, ...)` | Store hierarchy relations under a key. |
+| `VectorMap.get_relations(key)` | Read stored pair and tree relations for a key. |
+| `VectorMap.get_hierarchy_tree(key)` | Build a hierarchy view from stored tree relations. |
+| `VectorMap.get_contextual_vectors(result, num=2)` | Expand one result to neighboring context objects. |
+| `VectorMap.search_with_contextual_vectors(query_vector, top_k=5, num=2)` | Search while considering local context windows. |
+| `VectorMap.search_with_relations(query_vector, relation_types=...)` | Search while following explicit relations. |
+
+### Query APIs
+
+| API | Purpose |
+| --- | --- |
+| `VectorMap.search(query_vector, top_k=5, key=None, mode="single")` | Standard vector search with optional key, group, type, and mode filters. |
+| `VectorMap.search_entity(query_vector, key=..., top_k=5)` | Semantic-consistent retrieval scoped to one or more keys. |
+| `VectorMap.search_diverse(query_vector, query_key_vector=None, beta=0.5)` | Diversity-driven retrieval using HDMG or representative reranking. |
+| `VectorMap.search_dependency(query_vector, relation_types=..., hops=1)` | Dependency-expanded retrieval through relations or local context. |
+| `VectorMap.search_modal(query_vectors, modality_weights=None)` | Cross-modal retrieval wrapper. |
+| `VectorMap.search_multimodal(query_vectors, modality_weights=None)` | Fuse multiple modality-specific searches. |
+| `VectorMap.search_with_rep_vec(query_vector, top_k=5)` | Search group representatives. |
+| `VectorMap.search_with_representative_rerank(query_vector, query_key_vector=None, beta=0.5)` | Representative retrieval plus semantic reranking. |
+| `VectorMap.search_with_mixed_key_rep_vec(query_vector, query_key_vector, beta=0.5)` | Combine key-level semantic distance and representative-vector distance. |
+| `VectorMap.search_hdmg(query_vector, query_key_vector=None, alpha=0.5, top_k=5)` | Run HDMG-backed semantic-vector retrieval. |
+
+### Introspection
+
+| API | Purpose |
+| --- | --- |
+| `VectorMap.get_statistics()` | Summarize keys, groups, vectors, indexes, and relations. |
+| `VectorMap.analyze_relationships(key=None)` | Inspect relation coverage and relation types. |
+
 ## 1. Key-Restricted Retrieval
 
 Many practical tasks do not require an unconstrained global nearest-neighbor

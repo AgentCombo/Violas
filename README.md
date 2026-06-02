@@ -147,21 +147,12 @@ mismatch than visually plausible drift.
       <sub>Ant: entity identity is not preserved</sub>
     </td>
     <td width="50%" align="center" valign="top">
-      <img src="docs/figures/readme/case-2-2.jpg" width="390" alt="Barrel query retrieves visually similar round objects instead of barrels"><br>
-      <sub>Barrel: shape matches can cross entity boundaries</sub>
-    </td>
-  </tr>
-  <tr>
-    <td width="50%" align="center" valign="top">
       <img src="docs/figures/readme/case-2-3.jpg" width="390" alt="Wristwatch query retrieves unrelated small objects with low-level visual overlap"><br>
       <sub>Wristwatch: embedding proximity is not enough</sub>
     </td>
-    <td width="50%" align="center" valign="top">
-      <img src="docs/figures/readme/case-2-4.jpg" width="390" alt="Chair query retrieves outdoor shade structures instead of chairs"><br>
-      <sub>Chair: outdoor context should not override object identity</sub>
-    </td>
   </tr>
 </table>
+
 
 
 ### Diversity Loss
@@ -181,17 +172,8 @@ scene layouts under the same semantic entity.
       <sub>Airplane: cover flight configurations and scenes</sub>
     </td>
   </tr>
-  <tr>
-    <td width="50%" align="center" valign="top">
-      <img src="docs/figures/readme/case-3-3.jpg" width="390" alt="Leopard coverage case: retrieval should cover different poses and body layouts under the same entity"><br>
-      <sub>Leopard: cover poses and body layouts</sub>
-    </td>
-    <td width="50%" align="center" valign="top">
-      <img src="docs/figures/readme/case-3-4.jpg" width="390" alt="Blue jay coverage case: retrieval should cover different poses and visual variations of the same species"><br>
-      <sub>Blue jay: cover angles and species variations</sub>
-    </td>
-  </tr>
 </table>
+
 
 
 ### Dependency Loss
@@ -209,21 +191,13 @@ lose the dependency between setup, evidence, and conclusion.
       <sub>Norfloxacin: trial evidence should be retrieved as a chain</sub>
     </td>
     <td width="50%" align="center" valign="top">
-      <img src="docs/figures/readme/case-5-2.jpg" width="390" alt="LPS antibody query needs same-document immune-response context rather than unrelated LPS mentions"><br>
-      <sub>LPS antibody: abbreviation matches should keep the evidence chain</sub>
-    </td>
-  </tr>
-  <tr>
-    <td width="50%" align="center" valign="top">
-      <img src="docs/figures/readme/case-5-3.jpg" width="390" alt="Candidiasis treatment query needs individualized therapy context rather than isolated symptom or drug fragments"><br>
+      <img src="docs/figures/readme/case-5-2.jpg" width="390" alt="Candidiasis treatment query needs individualized therapy context rather than isolated symptom or drug fragments"><br>
       <sub>Candidiasis: treatment choices need patient context</sub>
-    </td>
-    <td width="50%" align="center" valign="top">
-      <img src="docs/figures/readme/case-5-4.jpg" width="390" alt="H. felis pathology query needs temporal inflammation context rather than generic inflammation passages"><br>
-      <sub>H. felis: pathology timelines should stay connected</sub>
     </td>
   </tr>
 </table>
+
+
 
 ### Cross-Modal Evidence
 
@@ -257,16 +231,34 @@ retrieval object instead of reconstructing them after a flat vector search.
 
 ## How It Works
 
+Most vector databases follow a flat vector-search paradigm: store each data
+item as an embedding and retrieve approximate nearest neighbors in that
+embedding space. This is effective when embedding proximity is enough, but it
+leaves richer semantic information outside the retrieval model. In the cases
+above, the missing information is exactly what the query needs: entity
+consistency, coverage of diverse local forms, and linked evidence.
+
+Violas turns these requirements into part of the indexed retrieval object. The
+system first organizes objects by semantic entity, then exposes diversity inside
+the entity through micro-clusters, and finally preserves object-level relations
+for context, dependency, and multimodal expansion.
+
 ### Retrieval Paradigm
 
 <p align="center">
   <img src="docs/figures/readme/paradigm.png" width="560" alt="Violas retrieval paradigm">
 </p>
 
-Violas changes the retrieval unit from an isolated vector to a structured
-semantic entity. A query is first matched to the entity-level object, then
-expanded to the members, local representatives, and linked evidence that belong
-to that object.
+The retrieval pipeline follows this structured design:
+
+1. route the query to candidate semantic groups
+2. select micro-clusters or members with a mixed semantic-embedding score
+3. expand through dependencies or paired modalities when the query requires
+   linked evidence
+
+This differs from post-processing a flat top-k result. Violas stores the
+semantic key, internal diversity, and dependency structure before retrieval, so
+the system does not need to reconstruct them after the nearest-neighbor search.
 
 ### Vector Group
 
@@ -274,15 +266,19 @@ to that object.
   <img src="docs/figures/readme/vectorgroup.png" width="720" alt="Vector Group structure">
 </p>
 
-`VectorGroup` is the structural unit behind Violas. Each group keeps:
+`VectorGroup` is the semantic-first storage abstraction behind Violas. It is a
+three-level structure:
 
-- a semantic entity, represented by a key and semantic vector
-- member observations associated with that entity
-- representative local regions used for coverage-preserving search
-- relevance links used for context-aware expansion
+| Layer | Role |
+| --- | --- |
+| Group header | Stores the semantic key and group-level semantic vector. |
+| Micro-clusters | Represent diverse local forms inside the same entity. |
+| Members | Store concrete objects, embeddings, metadata, and relations. |
 
-This lets Violas treat one semantic entity as a managed retrieval object instead
-of a loose collection of isolated embeddings.
+This lets one entity, such as a class, document, event, or multimodal item, be
+managed as one retrieval object instead of a loose collection of independent
+embeddings. The same structure supports entity-scoped search, diversity-aware
+composition, dependency expansion, and cross-modal pairing.
 
 ### HDMG Indexing
 
@@ -293,125 +289,65 @@ of a loose collection of isolated embeddings.
 
 On top of `VectorGroup`, Violas builds **HDMG** (Hierarchical Diversified Micro
 Cluster Graph), an indexing mechanism for efficient semantic-first retrieval.
-HDMG keeps search off the full flat object space by:
+HDMG indexes micro-clusters rather than all raw vectors. It keeps search off the
+full flat object space by:
 
 - routing into semantically compatible groups first
-- traversing representative local regions instead of scanning all members
+- traversing representative micro-cluster nodes instead of scanning all members
+- using heterogeneous traversal edges for embedding proximity and semantic reachability
 - preserving relevance expansion inside the same retrieval substrate
 
 ## API Overview
 
-The public API follows the same workflow as the paper, but the names below are
-the implemented Python methods rather than only paper pseudocode. The paper's
-operations such as `insert(o)`, `update(o, e)`, and `delete(o)` correspond to
-concrete `VectorMap` methods such as `VectorMap.insert()`,
-`VectorMap.insert_object()`, `VectorMap.update()`, and `VectorMap.delete()`.
+Violas exposes the high-level retrieval capabilities described in the paper,
+and backs them with concrete system APIs for object lifecycle management, index
+construction, relation maintenance, query execution, and inspection. The goal is
+to make the research abstraction usable as an implemented retrieval system, not
+only as paper pseudocode.
 
-### Native Capability Map
+### Paper-Aligned Capabilities
 
-| Native capability in the paper/evaluation | Implemented API | What it supports |
+| Paper capability | Primary APIs | Typical output |
 | --- | --- | --- |
-| Semantic-consistent retrieval | `VectorMap.search_entity(...)`, `VectorMap.search(..., key=...)`, `VectorMap.insert(key, group, ...)` | Route retrieval through the intended semantic entity before member ranking. |
-| Diversity-driven retrieval | `VectorMap.search_diverse(...)`, `VectorMap.search_with_representative_rerank(...)`, `VectorMap.create_cluster(...)` | Cover multiple micro-clusters or local forms inside the same entity. |
-| Dependency-expanded retrieval | `VectorMap.search_dependency(...)`, `VectorMap.add_relation(...)`, `VectorMap.search_with_contextual_vectors(...)` | Expand a seed hit to linked context, temporal neighbors, or relation targets. |
-| Cross-modal pairing | `VectorMap.search_modal(...)`, `VectorMap.search_multimodal(...)`, `VectorMap.add_pair_relation(...)` | Keep paired image-text or multimodal evidence inside the retrieval object. |
+| Semantic-consistent retrieval | `search_entity(...)`, `search(..., key=...)` | Results scoped to the intended entity. |
+| Diversity-driven retrieval | `create_cluster(...)`, `search_diverse(...)`, `search_with_representative_rerank(...)` | Results composed across local forms of one entity. |
+| Dependency-expanded retrieval | `add_relation(...)`, `search_dependency(...)`, `search_with_contextual_vectors(...)` | A seed hit plus linked context or evidence. |
+| Cross-modal pairing | `add_pair_relation(...)`, `search_modal(...)`, `search_multimodal(...)` | Paired image-text or multi-view evidence. |
 
-### 1. Object and Group Lifecycle
+### Implemented System Surface
 
-| API | Typical use | Notes |
+| Area | APIs | What it covers |
 | --- | --- | --- |
-| `VectorMap.insert(key, group, metadata=None)` | Register a `VectorGroup` under a semantic key. | Implemented group-level insert used by the core storage path. |
-| `VectorMap.insert_object(key, vector, description)` | Insert one object and return a `VectorRef`. | Object-level wrapper for paper-style `insert(o)`. |
-| `VectorMap.update(ref, vector=None, description=None)` | Update one object's embedding or metadata. | Paper-style `update(o, e)` alias backed by `update_object(...)`. |
-| `VectorMap.delete(ref)` | Remove one object by `VectorRef`. | Paper-style `delete(o)` alias backed by `delete_object(...)`. |
-| `VectorMap.assign(ref, key, group_name=None)` | Move one object into another semantic entity. | Paper-style assignment alias backed by `assign_object(...)`. |
-| `VectorMap.create_group(key, vectors, descriptions)` | Create a semantic group from member objects. | Builds a `VectorGroup` and registers it with `VectorMap.insert(...)`. |
-| `VectorMap.create_cluster(key, group, alpha=0.5)` | Build micro-clusters under a semantic entity. | Paper-style `create.cluster()` wrapper around auto clustering. |
-| `VectorGroup(...)` | Create a retrieval unit with a representative vector, member vectors, and descriptions. | Use one group for one semantic entity, document, event, or paired object. |
-| `VectorMap.insert_with_auto_cluster(key, group, alpha=0.5)` | Split a large group into representative local regions. | Useful when an entity has many views, chunks, or modes. |
-| `VectorMap.add_vector(vector, description)` | Append one item to an existing group. | The description should include `key` and `group_name`. |
-| `VectorMap.add_vector_list(vectors, descriptions)` | Batch append items and create context ids. | Convenient for chunked documents or ordered evidence. |
-| `VectorMap.update_object(ref, vector=None, description=None)` | Update one object's embedding or metadata. | Original explicit method kept for backward compatibility. |
-| `VectorMap.assign_object(ref, key, group_name=None)` | Move one object into another semantic group. | Original explicit method kept for backward compatibility. |
-| `VectorMap.delete_object(ref)` | Remove one object by `VectorRef`. | Original explicit method kept for backward compatibility. |
+| Create / insert | `create_group(...)`, `insert(...)`, `insert_object(...)`, `add_vector(...)`, `add_vector_list(...)` | Create semantic groups and insert individual or batched objects. |
+| Read / access | `get(...)`, `get_all_keys(...)`, `get_group_by_name(...)`, `get_group_by_id(...)` | Access stored keys, metadata, groups, and group contents. |
+| Update / move | `update(...)`, `update_object(...)`, `assign(...)`, `assign_object(...)` | Update object embeddings or metadata and move objects across groups. |
+| Delete | `delete(...)`, `delete_object(...)` | Remove stored objects by reference. |
+| Index construction | `build_index(...)`, `build_rep_index(...)`, `build_single_index(...)`, `set_key_vectors(...)`, `build_hdmg(...)`, `get_last_hdmg_search_stats(...)` | Build member indexes, representative indexes, semantic key state, and HDMG. |
+| Relation management | `VectorRef`, `VectorRelation`, `add_relation(...)`, `remove_relation(...)`, `add_pair_relation(...)`, `add_tree_relation(...)`, `get_relations(...)` | Maintain context, temporal, hierarchy, dependency, and multimodal links. |
+| Query execution | `search(...)`, `search_entity(...)`, `search_diverse(...)`, `search_dependency(...)`, `search_modal(...)`, `search_hdmg(...)` | Run standard, scoped, diverse, relation-aware, multimodal, and HDMG-backed retrieval. |
+| Inspection | `get_all_keys(...)`, `get_group_by_name(...)`, `get_statistics(...)`, `analyze_relationships(...)` | Inspect stored keys, groups, index state, and relation coverage. |
 
-### 2. Attach Semantic Signals
-
-| API | Typical use | Notes |
-| --- | --- | --- |
-| `VectorMap.set_key_vectors(key_vectors)` | Provide semantic vectors for keys such as classes, entities, or document ids. | Enables mixed semantic-vector retrieval. |
-| `VectorMap.set_key_vectors_from_predictor(predictor)` | Import key vectors from a predictor object. | The predictor is expected to expose `keys` and `text_features`. |
-| `VectorMap.get_key_vector(key)` | Resolve the semantic vector for a key or clustered subkey. | Handles keys such as `rhino-0001` by mapping back to `rhino`. |
-
-### 3. Build Search Indexes
-
-| API | Typical use | Notes |
-| --- | --- | --- |
-| `VectorMap.build_index()` | Build local indexes for representative and single-vector search. | Uses FAISS when available and falls back to exact search otherwise. |
-| `VectorMap.build_rep_index()` | Build only the representative-vector index. | Useful for group-level candidate generation. |
-| `VectorMap.build_single_index()` | Build only the member-vector index. | Useful for flat item-level lookup. |
-| `VectorMap.build_hdmg(embedding_k=16, semantic_intra_k=4, ...)` | Build HDMG over semantically attached representatives. | This is the fast path for mixed semantic-vector search. |
-| `VectorMap.get_last_hdmg_search_stats()` | Inspect the previous HDMG query. | Helpful for debugging visited nodes and graph traversal behavior. |
-
-### 4. Native Query Capabilities
-
-| API | Native capability | Result behavior |
-| --- | --- | --- |
-| `VectorMap.search_entity(query_vector, key=...)` | Semantic-consistent retrieval. | Routes or scopes retrieval by entity before local ranking. |
-| `VectorMap.search_diverse(query_vector, query_key_vector=None, beta=0.5)` | Diversity-driven retrieval. | Uses HDMG when built, otherwise representative reranking. |
-| `VectorMap.search_dependency(query_vector, relation_types=..., hops=1)` | Dependency-expanded retrieval. | Follows relation-aware search or local context expansion. |
-| `VectorMap.search_modal(query_vectors, modality_weights=...)` | Cross-modal pairing. | Fuses image, text, or other modality vectors. |
-| `VectorMap.search(query_vector, top_k=5, key=None, mode="single")` | Standard vector search, optionally scoped to one key. | Returns `SearchResult` objects with distance, key, group, and vector index. |
-| `VectorMap.search_with_rep_vec(query_vector, top_k=5)` | Search group representatives. | Good for routing to entity-level candidates. |
-| `VectorMap.search_with_representative_rerank(query_vector, query_key_vector=None, beta=0.5)` | Use representatives first, then rerank with semantic information. | Useful when quality matters more than raw flat search speed. |
-| `VectorMap.search_with_mixed_key_rep_vec(query_vector, query_key_vector, beta=0.5)` | Combine semantic-key relevance and representative-vector relevance. | `beta` controls the semantic vs. embedding tradeoff. |
-| `VectorMap.search_hdmg(query_vector, query_key_vector=None, alpha=0.5, top_k=5)` | Run graph-based semantic-vector retrieval. | Recommended for scalable mixed retrieval. |
-
-### 5. Lower-Level Relations, Context, and Multimodal Retrieval
-
-| API | Query pattern | Result behavior |
-| --- | --- | --- |
-| `VectorRef` | Address one vector inside a key/group/index location. | Used to build explicit links between items. |
-| `VectorRelation` | Store typed relations such as context, pair, parent-child, or temporal links. | Lets retrieval expand beyond one isolated hit. |
-| `VectorMap.add_relation(source, target, relation_type)` | Add an object-level dependency. | Supports context, temporal, parent-child, and cross-modal links. |
-| `VectorMap.remove_relation(source, target=None, relation_type=None)` | Remove stored dependencies. | Can remove all relations from one source object or a filtered relation target. |
-| `VectorMap.add_pair_relation(key, group1_id, group2_id)` | Link paired groups, such as image-caption or query-answer groups. | Supports paired evidence retrieval. |
-| `VectorMap.add_tree_relation(key, parent_name, child_name)` | Store hierarchical relations. | Useful for document sections, taxonomy, or structured records. |
-| `VectorMap.search_with_contextual_vectors(query_vector, num=2)` | Search and include nearby context vectors. | Works well for chunked documents and dialogue histories. |
-| `VectorMap.get_contextual_vectors(result, num=2)` | Expand an existing result with its neighbors. | Turns one hit into a small evidence bundle. |
-| `VectorMap.search_with_relations(query_vector, relation_types=...)` | Search while following explicit stored relations. | Returns relation-aware results. |
-| `VectorMap.search_multimodal(query_vectors, modality_weights=...)` | Fuse several query vectors or modalities. | Useful when one entity has image, text, or other views. |
-| `VectorMap.get_statistics()` / `VectorMap.analyze_relationships()` | Inspect storage and relation coverage. | Useful for dataset checks and benchmark reporting. |
-
-Example: group-scoped retrieval for a known entity:
+Example: object lifecycle and relation setup:
 
 ```python
-results = vm.search(query_vector, key="rhino", top_k=5)
+ref = vm.insert_object("paper-001", query_vec, {"text": "middle segment"})
+ctx = vm.insert_object("paper-001", context_vec, {"text": "previous segment"})
+vm.add_relation(ref, ctx, relation_type="context")
+vm.update(ref, description={"section": "clinical evidence"})
 ```
 
-Example: mixed semantic-vector retrieval with HDMG:
+Example: build indexes and run structured retrieval:
 
 ```python
 vm.set_key_vectors(key_vectors)
+vm.build_index()
 vm.build_hdmg()
 
-results = vm.search_hdmg(
-    query_vector=image_embedding,
-    query_key_vector=semantic_embedding,
-    alpha=0.5,
-    top_k=5,
-)
+results = vm.search_hdmg(query_vector, query_key_vector=semantic_embedding, top_k=5)
+context = vm.search_dependency(query_vector, relation_types=["context"], top_k=5)
 ```
 
-Example: expand a hit into contextual evidence:
-
-```python
-base_results = vm.search(query_vector, top_k=1)
-context_bundle = vm.get_contextual_vectors(base_results[0], num=2)
-```
-
-For a broader overview of supported retrieval patterns, see
-[docs/api.md](docs/api.md).
+For the fuller method list and retrieval patterns, see [docs/api.md](docs/api.md).
 
 ## Installation Options
 
