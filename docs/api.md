@@ -34,7 +34,7 @@ implemented APIs.
 | Semantic-consistent retrieval | `VectorMap.search_entity(query_vector, key=...)` | Retrieve inside selected semantic entities. |
 | Diversity-driven retrieval | `VectorMap.search_diverse(query_vector, query_key_vector=None, beta=0.5)` | Retrieve across diverse local regions. |
 | Dependency-expanded retrieval | `VectorMap.search_dependency(query_vector, relation_types=..., hops=1)` | Expand through relations or local context. |
-| Cross-modal pairing | `VectorMap.search_modal(query_vectors, modality_weights=...)` | Fuse image, text, or other modality vectors. |
+| Cross-modal retrieval | `VectorMap.search_modal(query_vectors, modality_weights=...)` | Fuse image, text, or other modality vectors. |
 
 ## Implemented API Surface
 
