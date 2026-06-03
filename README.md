@@ -74,20 +74,17 @@ The examples below correspond to the native capabilities evaluated in the
 paper: semantic-consistent retrieval, diversity-driven retrieval,
 dependency-expanded retrieval, and cross-modal retrieval. We show them through
 common flat-retrieval failure modes: entity mismatch, diversity loss,
-dependency loss, and broken cross-modal retrieval. Entity mismatch is split into
-two visible subcases: plausible mismatch, where the neighbor looks reasonable
-but belongs to the wrong entity, and unjustified mismatch, where the neighbor
-is close in embedding space without a clear semantic relation.
+dependency loss, and broken cross-modal retrieval.
 
 ### Entity Mismatch
 
 Flat nearest-neighbor search can drift into a different semantic entity. Violas
 routes by semantic entity first, then ranks local members.
 
-#### Plausible Entity Mismatch
-
-Some wrong neighbors are visually or textually plausible because they share
-coarse traits with the query, but they still violate the intended entity.
+Some wrong neighbors look plausible because they share coarse traits with the
+query, but they still violate the intended entity. More interestingly, some
+nearest neighbors are embedding-close without a clear category-level or visual
+relation to the query.
 
 <table>
   <tr>
@@ -101,24 +98,15 @@ coarse traits with the query, but they still violate the intended entity.
     </td>
   </tr>
   <tr>
-     <td width="50%" align="center" valign="top">
-      <img src="docs/figures/readme/case-1-3.jpg" width="390" alt="Platypus query retrieves visually similar aquatic animals instead of the intended entity"><br>
-      <sub>Platypus: coarse appearance is not enough</sub>
+    <td width="50%" align="center" valign="top">
+      <img src="docs/figures/readme/case-2-4.jpg" width="390" alt="Pigeon query retrieves visually related but fine-grained wrong targets"><br>
+      <sub>Pigeon: fine-grained category identity is not preserved</sub>
     </td>
     <td width="50%" align="center" valign="top">
       <img src="docs/figures/readme/case-1-4.jpg" width="390" alt="Stegosaurus query retrieves creatures with similar texture or shape but different semantics"><br>
       <sub>Stegosaurus: semantic identity should dominate</sub>
     </td>
   </tr>
-</table>
-
-#### Unjustified Entity Mismatch
-
-Some nearest neighbors are embedding-close without a clear category-level or
-visual relation to the query. These cases expose a stronger form of entity
-mismatch than visually plausible drift.
-
-<table>
   <tr>
     <td width="50%" align="center" valign="top">
       <img src="docs/figures/readme/case-2-1.jpg" width="390" alt="Ant query retrieves unrelated visual concepts under flat vector search"><br>
@@ -129,17 +117,8 @@ mismatch than visually plausible drift.
       <sub>Wristwatch: embedding proximity is not enough</sub>
     </td>
   </tr>
-  <tr>
-    <td width="50%" align="center" valign="top">
-      <img src="docs/figures/readme/case-2-3.jpg" width="390" alt="Lamp query retrieves visually close but semantically unjustified objects"><br>
-      <sub>Lamp: object semantics are overridden by superficial shape</sub>
-    </td>
-    <td width="50%" align="center" valign="top">
-      <img src="docs/figures/readme/case-2-4.jpg" width="390" alt="Pigeon query retrieves visually related but fine-grained wrong targets"><br>
-      <sub>Pigeon: fine-grained category identity is not preserved</sub>
-    </td>
-  </tr>
 </table>
+
 
 ### Diversity Loss
 
@@ -284,26 +263,29 @@ both semantic and embedding coherence. It uses heterogeneous traversal edges:
 
 ![Violas Benchmark Overview](docs/figures/benchmarks/overview_grid.png)
 
-Violas is evaluated on six vision and text benchmarks under the mixed
-semantic-vector retrieval objective described in the paper. At the balanced
-setting (`beta = 0.5`), the system delivers high retrieval quality with low
-latency across all datasets.
+Violas is evaluated on six image and text datasets. Following the paper, we
+compare Violas with three popular vector databases: Milvus, Qdrant, and Chroma.
+We also study the performance differences between Violas and Violas without
+HDMG (w/o HDMG). For system performance, we measure query latency and the
+operation time of data and index maintenance.
 
-| Dataset | HDMG Recall@3 | HDMG Latency (ms) | Representative Recall@3 | Representative Latency (ms) | Milvus Recall@3 | Milvus Latency (ms) |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Caltech-101 | 0.9985 | 3.06 | 1.0000 | 131.53 | 0.8972 | 15.94 |
-| CUB-200-2011 | 1.0000 | 2.91 | 1.0000 | 163.91 | 0.5253 | 15.69 |
-| COCO | 0.9965 | 1.49 | 1.0000 | 115.75 | 0.6625 | 4.97 |
-| 20 Newsgroups | 0.9987 | 2.50 | 0.9715 | 81.89 | 0.7832 | 5.16 |
-| OHSUMED | 0.9809 | 2.71 | 0.9226 | 62.44 | 0.4586 | 4.57 |
-| Yahoo Answers | 1.0000 | 2.94 | 0.9507 | 58.56 | 0.6132 | 5.23 |
+<p align="center">
+  <img src="docs/figures/benchmarks/table2.jpg" width="920" alt="Comparison of average Mixed Recall@3, Mixed NDCG@3, and query latency under different beta">
+  <br>
+  <sub>Comparison of average Mixed Recall@3, Mixed NDCG@3, and query latency under different &beta;.</sub>
+</p>
+
+<p align="center">
+  <img src="docs/figures/benchmarks/table3.jpg" width="920" alt="Average operation time for data and index maintenance">
+  <br>
+  <sub>Average operation time for data and index maintenance.</sub>
+</p>
 
 What this shows:
 
-- HDMG reaches near-perfect retrieval quality on every benchmark at `beta = 0.5`.
-- Representative reranking remains accurate but is substantially slower than HDMG.
-- Pure-vector baselines are competitive at `beta = 0.0`, but degrade once
-  semantic control matters.
+- Violas improves average Mixed Recall@3 and Mixed NDCG@3 by 40.3% and 30.0%
+  over representative vector-search baselines.
+- Violas achieves the lowest query latency and maintenance operation time.
 
 The benchmark environment uses an Intel Xeon Platinum 8350C CPU (2.60 GHz),
 16 CPU cores, and 64 GB RAM. Image embeddings use CLIP ViT-B/32 and text
@@ -438,7 +420,7 @@ Violas/
   benchmarks/      # six benchmark pipelines plus diversity cases
   examples/        # small runnable examples
   scripts/         # benchmark wrapper scripts
-  docs/            # API notes, data formats, benchmark results, case studies
+  docs/            # API notes, data formats, benchmark results, README figures
 ```
 
 ## Reproducing Benchmarks
