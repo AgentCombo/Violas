@@ -1,12 +1,11 @@
 # Violas
 
-**In-Memory Vector Group System for Semantic Search.**
+**In-Memory Vector Group System for Entity-Centric Vector Search.**
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.9--3.11-blue.svg)](https://www.python.org/)
-[![PyPI version](https://badge.fury.io/py/violas.svg)](https://badge.fury.io/py/violas)
 
-Violas is an in-memory vector group system for semantic search. Modern vector
+Violas is an in-memory vector group system for entity-centric vector search. Modern vector
 databases typically store each item as an embedding and retrieve approximate
 nearest neighbors in the embedding space. This is effective when embedding
 proximity is enough, but it treats each vector as an independent searchable
