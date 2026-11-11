@@ -4,7 +4,7 @@
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 
-[Quick start](#install-and-try-the-integrated-library) · [Typical cases](#typical-cases) · [Data and query execution](#data-and-query-execution) · [Experiments](#experiments)
+[Quick start](#install-and-try-the-integrated-library) · [Data and query execution](#data-and-query-execution) · [Experiments](#experiments)
 
 <sub>Click any figure to view it at full resolution.</sub>
 
@@ -45,140 +45,6 @@ python -m benchmarks.current.run test
 Full benchmarks target Linux/Python 3.12 and require prepared datasets,
 vector caches and database collections. See [benchmark commands](benchmarks/current/README.md)
 for dependencies and execution options.
-
-## Typical Cases
-
-These case studies illustrate entity consistency, diversity, linked evidence,
-and cross-modal pairing. The current measured workloads and results are
-described in [Experiments](#experiments).
-
-### Entity Mismatch
-
-Flat nearest-neighbor search can drift into a different semantic entity. Violas
-routes by semantic entity first, then ranks local members.
-
-#### Plausible Entity Mismatch
-
-Some wrong neighbors are visually or textually plausible because they share
-coarse traits with the query, but they still violate the intended entity.
-
-<table>
-  <tr>
-    <td width="50%" align="center" valign="top">
-      <a href="docs/figures/readme/case-1-1.jpg"><img src="docs/figures/readme/previews/case-1-1.jpg" width="360" alt="Rhinoceros query retrieves visually similar but semantically wrong large animals"></a><br>
-      <sub>Rhinoceros: large-animal shape is not enough</sub>
-    </td>
-    <td width="50%" align="center" valign="top">
-      <a href="docs/figures/readme/case-1-2.jpg"><img src="docs/figures/readme/previews/case-1-2.jpg" width="360" alt="Anchor query retrieves symbols and tools that share low-level shape features"></a><br>
-      <sub>Anchor: abstract shape should not override entity meaning</sub>
-    </td>
-  </tr>
-  <tr>
-     <td width="50%" align="center" valign="top">
-      <a href="docs/figures/readme/case-1-3.jpg"><img src="docs/figures/readme/previews/case-1-3.jpg" width="360" alt="Platypus query retrieves visually similar aquatic animals instead of the intended entity"></a><br>
-      <sub>Platypus: coarse appearance is not enough</sub>
-    </td>
-    <td width="50%" align="center" valign="top">
-      <a href="docs/figures/readme/case-1-4.jpg"><img src="docs/figures/readme/previews/case-1-4.jpg" width="360" alt="Stegosaurus query retrieves creatures with similar texture or shape but different semantics"></a><br>
-      <sub>Stegosaurus: semantic identity should dominate</sub>
-    </td>
-  </tr>
-</table>
-
-
-#### Unjustified Entity Mismatch
-
-Some nearest neighbors are embedding-close without a clear category-level or
-visual relation to the query. These cases expose a stronger form of entity
-mismatch than visually plausible drift.
-
-<table>
-  <tr>
-    <td width="50%" align="center" valign="top">
-      <a href="docs/figures/readme/case-2-1.jpg"><img src="docs/figures/readme/previews/case-2-1.jpg" width="360" alt="Ant query retrieves unrelated visual concepts under flat vector search"></a><br>
-      <sub>Ant: entity identity is not preserved</sub>
-    </td>
-    <td width="50%" align="center" valign="top">
-      <a href="docs/figures/readme/case-2-3.jpg"><img src="docs/figures/readme/previews/case-2-3.jpg" width="360" alt="Wristwatch query retrieves unrelated small objects with low-level visual overlap"></a><br>
-      <sub>Wristwatch: embedding proximity is not enough</sub>
-    </td>
-  </tr>
-</table>
-
-
-
-### Diversity Loss
-
-Even when the entity is correct, top results can be too redundant. Violas uses
-representative local regions to expose different poses, viewpoints, chunks, or
-scene layouts under the same semantic entity.
-
-<table>
-  <tr>
-    <td width="50%" align="center" valign="top">
-      <a href="docs/figures/readme/case-3-1.jpg"><img src="docs/figures/readme/previews/case-3-1.jpg" width="360" alt="Bird retrieval covering multiple views within the same entity"></a><br>
-      <sub>Bird: one entity, multiple useful views</sub>
-    </td>
-    <td width="50%" align="center" valign="top">
-      <a href="docs/figures/readme/case-3-2.jpg"><img src="docs/figures/readme/previews/case-3-2.jpg" width="360" alt="Airplane coverage case: retrieval should cover different flight configurations and scene compositions under the same entity"></a><br>
-      <sub>Airplane: cover flight configurations and scenes</sub>
-    </td>
-  </tr>
-</table>
-
-
-
-### Dependency Loss
-
-Some useful answers require linked objects rather than a single nearest chunk.
-In these OHSUMED cases, the middle segment is used as the query, while the
-desired answer is the surrounding same-document evidence chain. Flat top-k
-retrieval often returns isolated snippets that share surface vocabulary but
-lose the dependency between setup, evidence, and conclusion.
-
-<table>
-  <tr>
-    <td width="50%" align="center" valign="top">
-      <a href="docs/figures/readme/case-5-1.jpg"><img src="docs/figures/readme/previews/case-5-1.jpg" width="360" alt="Norfloxacin query needs linked evidence rather than isolated clinical-trial chunks"></a><br>
-      <sub>Norfloxacin: trial evidence should be retrieved as a chain</sub>
-    </td>
-    <td width="50%" align="center" valign="top">
-      <a href="docs/figures/readme/case-5-2.jpg"><img src="docs/figures/readme/previews/case-5-2.jpg" width="360" alt="Candidiasis treatment query needs individualized therapy context rather than isolated symptom or drug fragments"></a><br>
-      <sub>Candidiasis: treatment choices need patient context</sub>
-    </td>
-  </tr>
-</table>
-
-
-
-### Cross-Modal Evidence
-
-Some retrieval tasks need paired evidence across modalities, such as a caption
-and its corresponding image. Violas keeps these modality links inside the same
-retrieval object instead of reconstructing them after a flat vector search.
-
-<table>
-  <tr>
-    <td width="50%" align="center" valign="top">
-      <a href="docs/figures/readme/case-4-1.jpg"><img src="docs/figures/readme/previews/case-4-1.jpg" width="360" alt="COCO multimodal query about a woman cutting a large white sheet cake"></a><br>
-      <sub>Sheet cake: text query aligned with image evidence</sub>
-    </td>
-    <td width="50%" align="center" valign="top">
-      <a href="docs/figures/readme/case-4-2.jpg"><img src="docs/figures/readme/previews/case-4-2.jpg" width="360" alt="COCO multimodal query about a motorbike on a dirt road in the countryside"></a><br>
-      <sub>Motorbike: scene-level text and image agreement</sub>
-    </td>
-  </tr>
-  <tr>
-    <td width="50%" align="center" valign="top">
-      <a href="docs/figures/readme/case-4-3.jpg"><img src="docs/figures/readme/previews/case-4-3.jpg" width="360" alt="COCO multimodal query about a girl holding a cat and wearing a colorful skirt"></a><br>
-      <sub>Girl with cat: paired visual and caption evidence</sub>
-    </td>
-    <td width="50%" align="center" valign="top">
-      <a href="docs/figures/readme/case-4-4.jpg"><img src="docs/figures/readme/previews/case-4-4.jpg" width="360" alt="COCO multimodal query about a girl preparing to blow out a candle"></a><br>
-      <sub>Candle: multimodal evidence keeps context intact</sub>
-    </td>
-  </tr>
-</table>
 
 ## Data and query execution
 
