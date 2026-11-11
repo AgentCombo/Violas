@@ -1,0 +1,21 @@
+paper/
+materials/
+# Generated artifacts and local inputs
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+build/
+dist/
+.env
+.env.*
+cache/
+dataset/
+outputs/
+*.so
+*.dll
+*.db
+*.sqlite*
+*.pkl
+*.faiss
+path-map.local.json

@@ -11,7 +11,10 @@ from violas.storage import (
     get_relations_from_description,
 )
 
+from .retrieval import IntentIndex
+
 __all__ = [
+    "IntentIndex",
     "VectorGroup",
     "VectorMap",
     "VectorRef",

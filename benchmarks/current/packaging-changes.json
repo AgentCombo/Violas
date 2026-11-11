@@ -1,0 +1,145 @@
+{
+  "modified": [
+    {
+      "path": "runtime/scripts/adaptive_hdmg.py",
+      "original_sha256": "4ef9e78f71d7c26b6178760780db34b26ea74c90b0591483843323f8f21867e3",
+      "packaged_sha256_lf": "b9d20d4bc5a802c2659427ccb4c7b1c48f44a4495c8ddc2af0d990a760ab0103"
+    },
+    {
+      "path": "runtime/scripts/adaptive_hdmg_before_yahoo.py",
+      "original_sha256": "c142ebaacf8aae7175bd80a89d3dc2dc964abde88c3138e1a50743eb54e81ddd",
+      "packaged_sha256_lf": "40fe4c00453a52f27d5b0d595e6b01c7fd0107dce52c18a61e09e1a713f000cc"
+    },
+    {
+      "path": "runtime/scripts/diversity_preprocess.py",
+      "original_sha256": "16ce48469a9eeaf5ad1da2527ea248a335dd3969e4b1de2ef0d62f2a4dd70cce",
+      "packaged_sha256_lf": "33933ab6c6192ff836a65824fbc44ca4c659e306042796d6120263507cb2d7b5"
+    },
+    {
+      "path": "runtime/scripts/embedding_hdmg.py",
+      "original_sha256": "e73d06de30be3576131395c383db89068be56c16aafa920d61c1f9d8f2bc8f56",
+      "packaged_sha256_lf": "ae2bf2fd0839b1d0150179d718279aa2c29d224fec1fca00771a66959fb431f1"
+    },
+    {
+      "path": "runtime/scripts/embedding_hdmg_native.cpp",
+      "original_sha256": "484355e7317a8972a23796deea70a08e17ff5387b7ab871c4f09e5c26c5fea8e",
+      "packaged_sha256_lf": "d32c609b828411e878a01cb7c78185d4ab627a94135e853fc0d98484c50682a5"
+    },
+    {
+      "path": "runtime/scripts/embedding_hdmg_native.py",
+      "original_sha256": "05a21d7de9bf9e63f765488248e17a65b167d2384fac60b4810e52b8b4b5351b",
+      "packaged_sha256_lf": "721f170a5b0d2c19a1a5d60430e0e9c4173d9b78479efd29228386f71e88f583"
+    },
+    {
+      "path": "runtime/scripts/fast_hdmg_v3.py",
+      "original_sha256": "a0616d8a9658abb3995be7331ae24243eec9024d71cd60434cf04805f944c32c",
+      "packaged_sha256_lf": "f9ffd8f7b9e8ac53daac72ddd656bcdbddc4a6d6477c95d7c88468547ac23c46"
+    },
+    {
+      "path": "runtime/scripts/fast_summary.py",
+      "original_sha256": "b96873ba72c698e0dbb9e0423426fc443250013b08d9edf40ddeb5cf9a3e59ba",
+      "packaged_sha256_lf": "549fd472af2dfad8110c89c8a9c902c6293e3324c9219ed362aab5bc3cf72540"
+    },
+    {
+      "path": "runtime/scripts/hdmg_hot_update_v6.py",
+      "original_sha256": "b1fcebf9e3630c9d61ef93fc0cae55b41fc1857a30e09568a629b2d29d505a44",
+      "packaged_sha256_lf": "75a128b60c5b7cd9a60f91db2d2375353bcc044a92702be7326221315bb91461"
+    },
+    {
+      "path": "runtime/scripts/incremental_vg_v6.py",
+      "original_sha256": "619538b7d52a9f71ba832d5a9e288273f9d456defffd37ab9e672f47c6ed60b7",
+      "packaged_sha256_lf": "5fbe528300283b22eef98c9b05541ebf28f44308fc9c8238b066815c8f9337a8"
+    },
+    {
+      "path": "runtime/scripts/render_five_system_canonical.py",
+      "original_sha256": "dc6e9d7e36b4434f29bd32de95a2f4353cc6ae3c1d0fdf76136d4955a48f247a",
+      "packaged_sha256_lf": "c986b7785946c40d3e60a4739662e71a45530fdc50fb312a8f971c761b093398"
+    },
+    {
+      "path": "runtime/scripts/run_caltech_kv_retrieval.py",
+      "original_sha256": "e8953aae5d59051d98c78d03f14c4b44f9f2ed2d1700cc03b536f371833f1d13",
+      "packaged_sha256_lf": "6cf4a3981d185dea5b4f57d1d130f5083936cb0ef98487b3959f2a7e135ee257"
+    },
+    {
+      "path": "runtime/scripts/run_caltech_local_mvp.py",
+      "original_sha256": "50d6ed7cd3c6c1bd8c2da6a5cc2d283e67bb34b74925aa329e37417f3d98c399",
+      "packaged_sha256_lf": "996ad4d61f659f048b772ed3e8ed5e2bf3000f77525d98c45c18348074d8a5a9"
+    },
+    {
+      "path": "runtime/scripts/run_final_violas_bench.py",
+      "original_sha256": "a965cc58db7c8f47665187cdfd9dbf12676fe4b5304bc3946c416af25d5f0632",
+      "packaged_sha256_lf": "3775ec0667f680166974dfb539ab6e6a098887468f2434ebec1fc3cacbeb1623"
+    },
+    {
+      "path": "runtime/scripts/run_final_violas_maintenance.py",
+      "original_sha256": "5a01765615f286077f5ced391debe56a8a0653e96f41a6e09d964ce9fa10e810",
+      "packaged_sha256_lf": "ae073c9414147c5fdad20f58f2fd5228d6cace8bb1e8c4ce69ec460b015f6190"
+    },
+    {
+      "path": "runtime/scripts/run_guideline_pipeline.py",
+      "original_sha256": "4cc3a97564ac801b82e17d78c674145c7cd96bf0ebd94987333a10dea226c351",
+      "packaged_sha256_lf": "3f9f9543ba6b0edd934ef834a1a199b10efee62e92cc77ab378ea54e06697508"
+    },
+    {
+      "path": "runtime/scripts/run_image_intent_pipeline.py",
+      "original_sha256": "20e8af3d081f6341764e3fb2a7b1a6134e5a5a327bbf1eed931989028d1fc8e2",
+      "packaged_sha256_lf": "e15ed0b69f63f074aa13ef1dd265706a26173b62d4aaf237d08ae5190a40b18f"
+    },
+    {
+      "path": "runtime/scripts/run_maintenance_extended_v6.py",
+      "original_sha256": "711676fc6ca21d532b3495d0c9176b9b75c39834658970505230c5c9b0854c3b",
+      "packaged_sha256_lf": "8cda5050ca29a38fe0cb829497932cb5f54a052c9a652fbe270f610f0e9f7232"
+    },
+    {
+      "path": "runtime/scripts/run_milvus_capability_experiment.py",
+      "original_sha256": "fba36b87858e2e11cf39108fdad9e88b6cadec21c9ade742a5328505cfa237d9",
+      "packaged_sha256_lf": "ccb304784353bbb52ee9e4901c9a0c08b87e0252c5e039d61d729f17784b7428"
+    },
+    {
+      "path": "runtime/scripts/run_soft_entity_bench.py",
+      "original_sha256": "086308fd98248a93c16924e90431b99491b9cec3c46e0355c5a7f2f70675bb70",
+      "packaged_sha256_lf": "c071305d84f7b8a3cd9f7dbf2bf212ca383b8ebd050a71c223368947bd5267cd"
+    },
+    {
+      "path": "runtime/scripts/test_adaptive_hdmg.py",
+      "original_sha256": "0e65bdb8b6c117fead06e3c382a801b6ad0b9ebf1925642cbc73b2fdafb7b7a4",
+      "packaged_sha256_lf": "a58146d8db32ef00204d4bd9a4ee2bdab73f8b05d91508a81a23768228262069"
+    },
+    {
+      "path": "runtime/scripts/test_fast_hdmg.py",
+      "original_sha256": "d99569a68754b498a976b7ffb219392bca5d116776552f97bda5aa9507f9c57a",
+      "packaged_sha256_lf": "e79d4edfd3b483924be1c2565298d76242c78493bfd30d211adba45de1442309"
+    },
+    {
+      "path": "runtime/scripts/test_hot_hdmg_v6.py",
+      "original_sha256": "1250681d176d23125d6863142bcc7c3023283136111963e764e8ec8e9f9c8a23",
+      "packaged_sha256_lf": "5e73f671b92fcb7735f7cb11e96330b97f166112f5893c1e81fc3772eb1943a5"
+    },
+    {
+      "path": "runtime/storage/utils.py",
+      "original_sha256": "c4ac4312f94b43df8ad8036eea8e279fb2bcbe1059f7d091f46bdbefa6e76c49",
+      "packaged_sha256_lf": "b3b22eff5276297d7ad8f34ac9dfc6ab2687efb607f65fc9cbada03b10012ee7"
+    },
+    {
+      "path": "runtime/storage/vectorgroup.py",
+      "original_sha256": "17619d54db400685a8397a7aba64a9f4c2a1cb8f4c8b35fa74c3213a6c87d1ec",
+      "packaged_sha256_lf": "d675d08dfb9d5b7d1b6812711671ca8bc71812e1112174ce437233619a046d83"
+    },
+    {
+      "path": "runtime/storage/vectormap.py",
+      "original_sha256": "1f94e13eeddfbfcff6c0a4bc3dfafcfe9ed1a5d7e95f0e281435aa671efeeb9b",
+      "packaged_sha256_lf": "2b25686e941a01ea933d5e7fb0c198142a66f823f3ab01f2be5b683eca68eef8"
+    }
+  ],
+  "description": "Original source hashes are raw cloud bytes. Packaged text hashes normalize CRLF to LF.",
+  "reasons": [
+    "Core extraction; see core-source-map.json for source definitions and public package destinations.",
+    "Storage aliases preserve historical pickle import paths.",
+    "Core tests import the public package without database clients.",
+    "Environment-only optional API credentials and explicit cache path relocation.",
+    "Maintenance summary patch now targets the relocated implementation module.",
+    "Budgets, retrieval formulas, VDB parameters and recorded values are unchanged.",
+    "Machine-specific filesystem prefixes removed from code, workloads and compressed results; data paths are workspace-relative and module paths use @repo/.",
+    "Relative image roots resolved at runtime; optional mappings apply once. Numeric results and query IDs are unchanged."
+  ]
+}

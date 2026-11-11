@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 
 README = Path(__file__).parent / "PYPI_README.md"
@@ -14,13 +14,14 @@ setup(
     long_description_content_type="text/markdown",
     author="Violas Authors",
     license="Apache-2.0",
-    url="https://github.com/DoubleNorth/Violas",
+    url="https://github.com/AgentCombo/Violas",
     project_urls={
-        "Documentation": "https://github.com/DoubleNorth/Violas#readme",
-        "Issues": "https://github.com/DoubleNorth/Violas/issues",
+        "Documentation": "https://github.com/AgentCombo/Violas#readme",
+        "Issues": "https://github.com/AgentCombo/Violas/issues",
     },
-    python_requires=">=3.9",
-    packages=["violas", "violas.storage", "violas.core"],
+    python_requires=">=3.10",
+    packages=find_packages(include=["violas", "violas.*"]),
+    package_data={"violas.retrieval": ["*.cpp"]},
     install_requires=[
         "numpy",
         "scipy",
@@ -42,7 +43,6 @@ setup(
         "Intended Audience :: Science/Research",
         "License :: OSI Approved :: Apache Software License",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Topic :: Scientific/Engineering :: Artificial Intelligence",

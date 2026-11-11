@@ -1,3 +1,5 @@
+> **Legacy documentation.** For the current measured pipeline, see [benchmark commands](../benchmarks/current/README.md).
+
 # Data Format
 
 ## Expected Dataset Layout

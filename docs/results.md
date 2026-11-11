@@ -1,3 +1,5 @@
+> **Legacy documentation.** For the current measured pipeline, see [benchmark commands](../benchmarks/current/README.md).
+
 # Benchmark Results
 
 This page summarizes the six benchmark suites bundled with Violas:

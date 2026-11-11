@@ -1,3 +1,5 @@
+> **Legacy documentation.** For the current measured pipeline, see [benchmark commands](../benchmarks/current/README.md).
+
 # Benchmark Notes
 
 Violas includes six standard benchmark pipelines and one diversity-oriented

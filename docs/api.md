@@ -1,3 +1,5 @@
+> Existing VectorMap APIs are documented first. See [integrated intent retrieval](#integrated-intent-retrieval-current-research-implementation) below for the current package API, plus [benchmark commands](../benchmarks/current/README.md).
+
 # Violas API Notes
 
 This document summarizes the higher-level retrieval capabilities enabled by the
@@ -34,7 +36,7 @@ implemented APIs.
 | Semantic-consistent retrieval | `VectorMap.search_entity(query_vector, key=...)` | Retrieve inside selected semantic entities. |
 | Diversity-driven retrieval | `VectorMap.search_diverse(query_vector, query_key_vector=None, beta=0.5)` | Retrieve across diverse local regions. |
 | Dependency-expanded retrieval | `VectorMap.search_dependency(query_vector, relation_types=..., hops=1)` | Expand through relations or local context. |
-| Cross-modal retrieval | `VectorMap.search_modal(query_vectors, modality_weights=...)` | Fuse image, text, or other modality vectors. |
+| Cross-modal pairing | `VectorMap.search_modal(query_vectors, modality_weights=...)` | Fuse image, text, or other modality vectors. |
 
 ## Implemented API Surface
 
@@ -501,3 +503,51 @@ Taken together, these APIs highlight the main design goal of Violas:
 Violas is not only a nearest-neighbor search layer. It is a structured
 retrieval framework that integrates semantic scope, grouped storage, graph
 routing, context, and relations into one unified retrieval model.
+
+
+## Integrated intent retrieval (current research implementation)
+
+```python
+from violas import IntentIndex
+
+# vm is a populated VectorMap with entity key vectors.
+index = IntentIndex.from_vectormap(vm)
+ids, scored_candidates, stats = index.search(query_embedding, resolved_plan)
+```
+
+Run `python -m examples.intent_retrieval` for a complete dataset-free example.
+Each member description must provide a unique `object_id`, `entity`, and a
+`facet_values` dictionary. Each micro-cluster belongs to one entity; that entity
+must have a finite nonzero vector in `vm.key_vectors`. The adapter builds the
+same graph and semantic directory used by the experiments. It normalizes the
+input embedding and uses budget32/score_batch4 by default.
+
+The already-resolved plan has the following fields (no LLM is invoked here):
+
+| Field | Meaning |
+| --- | --- |
+| `entity_preference` | Known entity key used for semantic relevance |
+| `required_entity` | Hard entity key, or `None` for soft entity scope |
+| `embedding_weight`, `semantic_weight` | Relevance mixture; sum to one |
+| `hard_filters` | List of `{key, value}` constraints; all must match |
+| `facet_dimension` | One optional facet dimension for soft quotas |
+| `lambda` | Fallback category reward |
+| `category_preferences` | `{value: {lambda: weight, quota: integer}}` |
+| `top_k` | Maximum number of results |
+
+The fixed budget is approximate. `certify=True` permits continuation using
+conservative bounds; it is not the fixed-budget setting used for report timing.
+SELECT exactly optimizes the one-dimensional quota objective **within the
+scored candidates**. It does not make limited candidate retrieval globally exact.
+
+`IntentIndex` holds a gallery snapshot: rebuild it after changing `vm`.
+`violas.retrieval.IncrementalVGStore` exposes the measured incremental storage
+implementation (template cache, object map, snapshot path, graph flag), with
+insert/delete/update by object ID, WAL persistence and recovery. Its current
+mutation API assumes registered entities and a supplied source object map;
+it is not a general transactional or concurrent database API. See
+`benchmarks/current/runtime/scripts/run_single_crud.py` for its measured usage.
+
+Legacy `VectorMap.search`, `search_hdmg`, and relation APIs above are preserved.
+The optional native embedding kernel is a Linux build used by the research
+runner; importing the public package does not load a compiled shared library.

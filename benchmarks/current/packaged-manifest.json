@@ -1,0 +1,361 @@
+{
+  "text_normalization": "CRLF to LF",
+  "files": [
+    {
+      "path": "core-source-map.json",
+      "sha256": "7c71518d4b1143be2a02b776f3348b18580eb81707b5e4ccdf34bc65e5ed7b1a"
+    },
+    {
+      "path": "packaging-changes.json",
+      "sha256": "557e8c2304b8523d4677da02c8f920d765764ca9dc362d6fd877f9b8124cdfb4"
+    },
+    {
+      "path": "results/measurements.json.gz",
+      "sha256": "b23742d9edb27b23770f2aa3e437a48d8531a70bec1524102782888467136160"
+    },
+    {
+      "path": "results/results-manifest.json",
+      "sha256": "d14cc1101a1dea8517bc6f46db4c1cc97ed600909b9a60802ca2ee468c95eaba"
+    },
+    {
+      "path": "run.py",
+      "sha256": "786d0284fbdcc8efd4bf5f09d82e364fb17a2716818ecfa5daeab342be82d3bc"
+    },
+    {
+      "path": "runtime/scripts/adaptive_hdmg.py",
+      "sha256": "b9d20d4bc5a802c2659427ccb4c7b1c48f44a4495c8ddc2af0d990a760ab0103"
+    },
+    {
+      "path": "runtime/scripts/adaptive_hdmg_before_yahoo.py",
+      "sha256": "40fe4c00453a52f27d5b0d595e6b01c7fd0107dce52c18a61e09e1a713f000cc"
+    },
+    {
+      "path": "runtime/scripts/artifact_paths.py",
+      "sha256": "ee3570cce076247399f1572f8f0d4bb83522eb7bd33a5fef8ba212c30660f0bd"
+    },
+    {
+      "path": "runtime/scripts/benchmark_yahoo_search.py",
+      "sha256": "2f95c7ffc0cb38feea15abae1e6649eca64504963c22910d6f31a14c54d76126"
+    },
+    {
+      "path": "runtime/scripts/diversity_preprocess.py",
+      "sha256": "33933ab6c6192ff836a65824fbc44ca4c659e306042796d6120263507cb2d7b5"
+    },
+    {
+      "path": "runtime/scripts/embedding_hdmg.py",
+      "sha256": "ae2bf2fd0839b1d0150179d718279aa2c29d224fec1fca00771a66959fb431f1"
+    },
+    {
+      "path": "runtime/scripts/embedding_hdmg_native.cpp",
+      "sha256": "d32c609b828411e878a01cb7c78185d4ab627a94135e853fc0d98484c50682a5"
+    },
+    {
+      "path": "runtime/scripts/embedding_hdmg_native.py",
+      "sha256": "721f170a5b0d2c19a1a5d60430e0e9c4173d9b78479efd29228386f71e88f583"
+    },
+    {
+      "path": "runtime/scripts/fast_hdmg.py",
+      "sha256": "c90506a424b473de0685267147b2c8f5826d7728b583737a9166a93b13db7089"
+    },
+    {
+      "path": "runtime/scripts/fast_hdmg_v3.py",
+      "sha256": "f9ffd8f7b9e8ac53daac72ddd656bcdbddc4a6d6477c95d7c88468547ac23c46"
+    },
+    {
+      "path": "runtime/scripts/fast_summary.py",
+      "sha256": "549fd472af2dfad8110c89c8a9c902c6293e3324c9219ed362aab5bc3cf72540"
+    },
+    {
+      "path": "runtime/scripts/hdmg_hot_update_v6.py",
+      "sha256": "75a128b60c5b7cd9a60f91db2d2375353bcc044a92702be7326221315bb91461"
+    },
+    {
+      "path": "runtime/scripts/incremental_vg_v6.py",
+      "sha256": "5fbe528300283b22eef98c9b05541ebf28f44308fc9c8238b066815c8f9337a8"
+    },
+    {
+      "path": "runtime/scripts/label_caltech_local_mvp.py",
+      "sha256": "218703f637a91e218fe91a95f1feb1446b6609bee27962204205608c48e19c31"
+    },
+    {
+      "path": "runtime/scripts/label_caltech_qwen50.py",
+      "sha256": "25e203e4800d0b4c27ed8a5264d52f08b525f1d46be9ac22dba9b32494951c02"
+    },
+    {
+      "path": "runtime/scripts/pilot_airplanes_vlm_facets.py",
+      "sha256": "82cdfed13e8f5be3b9f43459b536d9df18351349ecd6ed5bc433eefec3006923"
+    },
+    {
+      "path": "runtime/scripts/render_five_system_canonical.py",
+      "sha256": "c986b7785946c40d3e60a4739662e71a45530fdc50fb312a8f971c761b093398"
+    },
+    {
+      "path": "runtime/scripts/render_soft_entity_report.py",
+      "sha256": "ddddfa690c5d6cdab7d489b55316322af324f7c4ccb274aa2c3cb5bfa27c59fc"
+    },
+    {
+      "path": "runtime/scripts/rescore_vdb_coverage.py",
+      "sha256": "4bdafdc0ba865fb9bdd004e6dc620672fe55984e98a59db6e75a0fe2bc4d4821"
+    },
+    {
+      "path": "runtime/scripts/run_caltech100_canonical_bench.py",
+      "sha256": "52d5884735e65f8ba01f3b97f80696867147657d67f534ce25e7d57a655c6663"
+    },
+    {
+      "path": "runtime/scripts/run_caltech_filter_order.py",
+      "sha256": "080906afa0d7ab9d70488ff5f57f6b8e32bb702550ac91dc867974ad0c7c7f9d"
+    },
+    {
+      "path": "runtime/scripts/run_caltech_kv_retrieval.py",
+      "sha256": "6cf4a3981d185dea5b4f57d1d130f5083936cb0ef98487b3959f2a7e135ee257"
+    },
+    {
+      "path": "runtime/scripts/run_caltech_local_mvp.py",
+      "sha256": "996ad4d61f659f048b772ed3e8ed5e2bf3000f77525d98c45c18348074d8a5a9"
+    },
+    {
+      "path": "runtime/scripts/run_caltech_qwen50_bench.py",
+      "sha256": "550304eade6ec44ae7e743944a397d02a0373ee24bffe1c99337246c69480225"
+    },
+    {
+      "path": "runtime/scripts/run_experiment4_current.py",
+      "sha256": "e302fe83019ba71b702cbaad224199c4640e0e3690dc271b3879feda21c1fe3f"
+    },
+    {
+      "path": "runtime/scripts/run_fancy_experiments.py",
+      "sha256": "e3acb2c6fb8c314f1448523ebe789862ec8f2ca67b21cbaa316714f2c8167c38"
+    },
+    {
+      "path": "runtime/scripts/run_final_postfilter_ann.py",
+      "sha256": "720f2828083cdff052922212478cacf56ba3878746e1d1026612affa7b1f667d"
+    },
+    {
+      "path": "runtime/scripts/run_final_violas_bench.py",
+      "sha256": "3775ec0667f680166974dfb539ab6e6a098887468f2434ebec1fc3cacbeb1623"
+    },
+    {
+      "path": "runtime/scripts/run_final_violas_maintenance.py",
+      "sha256": "ae073c9414147c5fdad20f58f2fd5228d6cace8bb1e8c4ce69ec460b015f6190"
+    },
+    {
+      "path": "runtime/scripts/run_guideline_pipeline.py",
+      "sha256": "3f9f9543ba6b0edd934ef834a1a199b10efee62e92cc77ab378ea54e06697508"
+    },
+    {
+      "path": "runtime/scripts/run_image_intent_pipeline.py",
+      "sha256": "e15ed0b69f63f074aa13ef1dd265706a26173b62d4aaf237d08ae5190a40b18f"
+    },
+    {
+      "path": "runtime/scripts/run_integrated_retrieval_v6.py",
+      "sha256": "28deb4b3de139beed3dab1d293b6a7ecb0ad7d1dcf55de1442ea6cea5b2f2564"
+    },
+    {
+      "path": "runtime/scripts/run_maintenance_extended_v6.py",
+      "sha256": "8cda5050ca29a38fe0cb829497932cb5f54a052c9a652fbe270f610f0e9f7232"
+    },
+    {
+      "path": "runtime/scripts/run_milvus_capability_experiment.py",
+      "sha256": "ccb304784353bbb52ee9e4901c9a0c08b87e0252c5e039d61d729f17784b7428"
+    },
+    {
+      "path": "runtime/scripts/run_multidataset_canonical_bench.py",
+      "sha256": "1c4fd4b8713ac69d9084e488de5a516153ab408936eddf234ea87a7d365391ea"
+    },
+    {
+      "path": "runtime/scripts/run_pure_embedding_final.py",
+      "sha256": "374c09bfe99d50b97db3982c7cfd6f3bcc69bc87c56a7e1e80a3c19fdc741738"
+    },
+    {
+      "path": "runtime/scripts/run_qdrant_chroma_backends.py",
+      "sha256": "2d64cf9bf81021faef85da65c37cf7d0f159cc9701a61f7a57e0d2fa5d303677"
+    },
+    {
+      "path": "runtime/scripts/run_single_crud.py",
+      "sha256": "e76569befbe4b62227b716d2e24c10e486445ead1c1ef077ce6a6c82655f26d4"
+    },
+    {
+      "path": "runtime/scripts/run_soft_entity_bench.py",
+      "sha256": "c071305d84f7b8a3cd9f7dbf2bf212ca383b8ebd050a71c223368947bd5267cd"
+    },
+    {
+      "path": "runtime/scripts/test_adaptive_hdmg.py",
+      "sha256": "a58146d8db32ef00204d4bd9a4ee2bdab73f8b05d91508a81a23768228262069"
+    },
+    {
+      "path": "runtime/scripts/test_core_store.py",
+      "sha256": "67cb49b11ec56aa522123549e322e54f613f77914786a6aab51763a812412869"
+    },
+    {
+      "path": "runtime/scripts/test_embedding_hdmg_native.py",
+      "sha256": "8e3bd07e183961bd48201d40ad07ea9e1f9b67ef833026c0de6279934e5f0e30"
+    },
+    {
+      "path": "runtime/scripts/test_fast_hdmg.py",
+      "sha256": "e79d4edfd3b483924be1c2565298d76242c78493bfd30d211adba45de1442309"
+    },
+    {
+      "path": "runtime/scripts/test_hot_hdmg_v6.py",
+      "sha256": "5e73f671b92fcb7735f7cb11e96330b97f166112f5893c1e81fc3772eb1943a5"
+    },
+    {
+      "path": "runtime/scripts/test_storage_v6.py",
+      "sha256": "6d0fd8f552a815e4826c785fe3220286ddaea710e16f39663afec0bd53f6ddbf"
+    },
+    {
+      "path": "runtime/storage/__init__.py",
+      "sha256": "9faf87a6fff5e64e236a338ddbcc81c60d593a4c067decee8da6a49b987485e7"
+    },
+    {
+      "path": "runtime/storage/utils.py",
+      "sha256": "b3b22eff5276297d7ad8f34ac9dfc6ab2687efb607f65fc9cbada03b10012ee7"
+    },
+    {
+      "path": "runtime/storage/vectorgroup.py",
+      "sha256": "d675d08dfb9d5b7d1b6812711671ca8bc71812e1112174ce437233619a046d83"
+    },
+    {
+      "path": "runtime/storage/vectormap.py",
+      "sha256": "2b25686e941a01ea933d5e7fb0c198142a66f823f3ab01f2be5b683eca68eef8"
+    },
+    {
+      "path": "source-manifest.json",
+      "sha256": "86f6c7133fd2151417af4cc40afce44e0c75ada4f13ef070e1b2683cd65351d3"
+    },
+    {
+      "path": "workloads/20news.json",
+      "sha256": "7eaae54c81a1046cd981713ad6eafb501e8ee8aa24223e2bddc5a470aa6055de"
+    },
+    {
+      "path": "workloads/caltech101.json",
+      "sha256": "72dd53b00a21f3899fae12de873265cff3c54ff5e9baccb8ddad559920a89ba9"
+    },
+    {
+      "path": "workloads/cub200.json",
+      "sha256": "ba0c6037180f695255d4cf50be2ef66d07a2ab17c561120e49a5defa4b63a5a9"
+    },
+    {
+      "path": "workloads/flowers102.json",
+      "sha256": "4d42a1b62de009bf0243c53b6e215c3c92f937ce601450e452b14917e9e2c7f2"
+    },
+    {
+      "path": "workloads/ohsumed.json",
+      "sha256": "2e5ad7251f1ab4c9367ccd502dd73af10d1bf6fe615913eb72572288bb59d8af"
+    },
+    {
+      "path": "workloads/yahoo.json",
+      "sha256": "9d84fe01c5c2ade4a6372076c3b648af8e360b135d31f04af459f86c62d71f13"
+    },
+    {
+      "path": "../../examples/intent_retrieval.py",
+      "sha256": "d0d76937156d78cc77ceba8206fa50ec56b75c4159a9ba2dfd98233ce5b270b9"
+    },
+    {
+      "path": "../../violas/__init__.py",
+      "sha256": "33de0f1a0a7abfbcad1e793008c98cbce2215279cbe152805683d9d5eb63a7b6"
+    },
+    {
+      "path": "../../violas/core/__init__.py",
+      "sha256": "ee8ebe59d4be18c55450b61cb371097cd3c0604a0151180fcfd612e3bee7d79d"
+    },
+    {
+      "path": "../../violas/core/bench_recall_utils.py",
+      "sha256": "253a739f1de578282cb2b40f1d49090281254f83fccaa3db445f40b852a75648"
+    },
+    {
+      "path": "../../violas/core/clip_features.py",
+      "sha256": "d04a22361324bcac937e9350109926492abcee6bc801fde03c9dfd147a114481"
+    },
+    {
+      "path": "../../violas/core/ivf_flat.py",
+      "sha256": "126d21a35c2a0eb5e807a42a4602030f5872347e8b08c074a38fc186dba26dbc"
+    },
+    {
+      "path": "../../violas/core/legacy_pickle.py",
+      "sha256": "ca3d8276c7ae202194f319406af4600abc2e69f8f218fcc9f6a1a76e58ca9a32"
+    },
+    {
+      "path": "../../violas/retrieval/__init__.py",
+      "sha256": "3f44fb35c4f6f6f215469a243b37b301a686796861752d4b3331b3a239f03b3b"
+    },
+    {
+      "path": "../../violas/retrieval/directory.py",
+      "sha256": "e974d6c527cd4b95aeafc22a8aa0fb2ee43161b195847dc06790a4dfab20cc2b"
+    },
+    {
+      "path": "../../violas/retrieval/embedding_hdmg.py",
+      "sha256": "e73d06de30be3576131395c383db89068be56c16aafa920d61c1f9d8f2bc8f56"
+    },
+    {
+      "path": "../../violas/retrieval/embedding_hdmg_native.cpp",
+      "sha256": "484355e7317a8972a23796deea70a08e17ff5387b7ab871c4f09e5c26c5fea8e"
+    },
+    {
+      "path": "../../violas/retrieval/embedding_native.py",
+      "sha256": "7a53fda4ca4db7b74a563b0d75f8ffed0568f03d9640ed6959a3f0e4442875c5"
+    },
+    {
+      "path": "../../violas/retrieval/geometry.py",
+      "sha256": "b96873ba72c698e0dbb9e0423426fc443250013b08d9edf40ddeb5cf9a3e59ba"
+    },
+    {
+      "path": "../../violas/retrieval/hdmg.py",
+      "sha256": "77cb73aded9c167ac5f4f6ed59c2aaa15ea37e648c1e632eaf82dea2955be143"
+    },
+    {
+      "path": "../../violas/retrieval/hdmg_build.py",
+      "sha256": "a0616d8a9658abb3995be7331ae24243eec9024d71cd60434cf04805f944c32c"
+    },
+    {
+      "path": "../../violas/retrieval/hdmg_historical.py",
+      "sha256": "20fd556cf3ddead4ea0a9f11431abc484ccbac3dfb9ad66b6fddf8eedc83c827"
+    },
+    {
+      "path": "../../violas/retrieval/hdmg_update.py",
+      "sha256": "7f7396f133a68cb940fe28b4762209cf3ffb679f92eb9342b401bb40e7fb959f"
+    },
+    {
+      "path": "../../violas/retrieval/incremental.py",
+      "sha256": "5b04952f670c2b8ac3b2100b258ccb7beba541ccf15d563dd92125589419b615"
+    },
+    {
+      "path": "../../violas/retrieval/index.py",
+      "sha256": "8d96982ba9f646b34b8d2f7c24150be2362d18c3fb2fa6d73afbc04de314e582"
+    },
+    {
+      "path": "../../violas/retrieval/objective.py",
+      "sha256": "d733ffa8abc1009917987d6e173ae0e90f5adea718de04840b099ede9dc9b7a1"
+    },
+    {
+      "path": "../../violas/retrieval/objects.py",
+      "sha256": "93fc3acd214a0ad7d6fdb1e5413305f407a410c40edc8c401f370ecb3c4658df"
+    },
+    {
+      "path": "../../violas/retrieval/scoring.py",
+      "sha256": "38bb4d01d60dc9a23e6499cd1b5f166186cf6f954fbe772dd4f90b5c94c92738"
+    },
+    {
+      "path": "../../violas/retrieval/store_base.py",
+      "sha256": "ba9b0069df6a1fd788ca0f9b24d19e8ab79004657e8a18a6b86db47c5d47efdc"
+    },
+    {
+      "path": "../../violas/storage/__init__.py",
+      "sha256": "dc6eb3718ddd9db6b40e5e1b1c680e62c890db1bc2303b31ce2c18f249f3e217"
+    },
+    {
+      "path": "../../violas/storage/utils.py",
+      "sha256": "9611d67080a82f72728c1c8e9394bc693700f254062704b06496309e74452522"
+    },
+    {
+      "path": "../../violas/storage/vectorgroup.py",
+      "sha256": "1f1e2e85e5c95e7f131112c6176c0e95e03e57451316bb6a806bc94d9ffbc2d7"
+    },
+    {
+      "path": "../../violas/storage/vectormap.py",
+      "sha256": "6e4295485613ff559062604a689a841384077f8725152cecc99918eff29bd79c"
+    },
+    {
+      "path": "runtime/scripts/test_artifact_paths.py",
+      "sha256": "868ac7ef279e8b506baa589b4396e6d4a008905df8013bb1bb1e6d130c5f62fd"
+    }
+  ]
+}

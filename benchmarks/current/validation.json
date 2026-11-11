@@ -1,0 +1,53 @@
+{
+  "date": "2026-11-11",
+  "scope": "Core integration correctness and frozen evidence; no new timing run",
+  "integrated_core": {
+    "environment": "Local Windows, isolated Python 3.12 environment",
+    "relocated_definitions_ast_equal": 28,
+    "randomized_exhaustive_cases": 40,
+    "graph_topology": "PASS against original public VectorMap builder",
+    "successive_sparse_graph_updates": 12,
+    "persistent_store": "PASS initial build, insert, facet update, delete and WAL recovery; exact objective checks after each phase",
+    "public_example": "PASS from source and installed wheel without benchmark or VDB imports",
+    "wheel": "PASS setuptools wheel build, installation and public example"
+  },
+  "evidence": {
+    "report_table_rows_matched": 168,
+    "aggregate_checks": 140
+  },
+  "previous_export_validation": {
+    "date": "2026-11-11",
+    "scope": "Code and evidence validation; no new performance benchmark",
+    "cloud_python": "Python 3.12.3, existing measured environment",
+    "randomized_exhaustive_cases": 40,
+    "graph_topology": "PASS construction and changed-center comparison",
+    "sparse_graph_updates": "PASS 12 successive updates against full original topology",
+    "frozen_query_objectives": {
+      "caltech101": 100,
+      "cub200": 100,
+      "flowers102": 100,
+      "20news": 100,
+      "ohsumed": 100,
+      "yahoo": 100
+    },
+    "objective_absolute_tolerance": 2e-06,
+    "report_table_rows_matched": 168,
+    "notes": [
+      "All 600 frozen query objectives and hard validity verified using exported current engine.",
+      "Full input bundle and compatibility caches remain external.",
+      "No new full six-dataset latency run, fresh-environment dependency installation, or LLM call performed."
+    ],
+    "native_embedding_exact_checks": 40,
+    "recorded_aggregate_checks": 140,
+    "module_origin_assertions": "PASS: benchmark, corpus and storage imported from exported runtime",
+    "documentation_links": "PASS",
+    "source_diff_whitespace": "PASS",
+    "secret_pattern_scan": "No matching private key/token patterns in new artifact"
+  },
+  "limitations": [
+    "The 600-query full-data check and native Linux kernel check above belong to the pre-extraction export validation.",
+    "Cloud upload for a post-extraction full-data rerun was blocked by approval review; it was not retried.",
+    "Relocated measured definitions were verified AST-equivalent after dependency-name rewriting, and local correctness tests passed.",
+    "Full datasets/caches and live VDB collections are external; no new performance or LLM experiment was run."
+  ]
+}

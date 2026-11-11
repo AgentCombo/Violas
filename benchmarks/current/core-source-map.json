@@ -1,0 +1,111 @@
+{
+  "description": "Measured cloud algorithms integrated into public package; historical script names are thin compatibility aliases.",
+  "modules": [
+    {
+      "original": "run_caltech_kv_retrieval.py",
+      "symbols": [
+        "iter_objects",
+        "make_object_map"
+      ],
+      "destination": "violas/retrieval/objects.py",
+      "changes": "Import relocation only; function/class bodies preserved except dependency names.",
+      "verified_definition_count": 2
+    },
+    {
+      "original": "run_guideline_pipeline.py",
+      "symbols": [
+        "resolve_plan",
+        "materialize_plan_preferences",
+        "category_preference",
+        "satisfies",
+        "eligible_ids",
+        "score_object",
+        "label_of",
+        "select_exact",
+        "objective"
+      ],
+      "destination": "violas/retrieval/objective.py",
+      "changes": "Import relocation only; function/class bodies preserved except dependency names.",
+      "verified_definition_count": 9
+    },
+    {
+      "original": "run_guideline_pipeline.py",
+      "symbols": [
+        "_geometric_summary",
+        "_angular_similarity_upper",
+        "build_semantic_directory"
+      ],
+      "destination": "violas/retrieval/directory.py",
+      "changes": "Import relocation only; function/class bodies preserved except dependency names.",
+      "verified_definition_count": 3
+    },
+    {
+      "original": "run_soft_entity_bench.py",
+      "symbols": [
+        "Corpus",
+        "select",
+        "representative_scan"
+      ],
+      "destination": "violas/retrieval/scoring.py",
+      "changes": "Import relocation only; function/class bodies preserved except dependency names.",
+      "verified_definition_count": 3
+    },
+    {
+      "original": "run_final_violas_maintenance.py",
+      "symbols": [
+        "VGStore"
+      ],
+      "destination": "violas/retrieval/store_base.py",
+      "changes": "Import relocation only; function/class bodies preserved except dependency names.",
+      "verified_definition_count": 1
+    },
+    {
+      "original": "adaptive_hdmg.py",
+      "destination": "violas/retrieval/hdmg.py",
+      "changes": "Import relocation only.",
+      "verified_definition_count": 1
+    },
+    {
+      "original": "adaptive_hdmg_before_yahoo.py",
+      "destination": "violas/retrieval/hdmg_historical.py",
+      "changes": "Import relocation only.",
+      "verified_definition_count": 1
+    },
+    {
+      "original": "fast_hdmg_v3.py",
+      "destination": "violas/retrieval/hdmg_build.py",
+      "changes": "Import relocation only.",
+      "verified_definition_count": 2
+    },
+    {
+      "original": "fast_summary.py",
+      "destination": "violas/retrieval/geometry.py",
+      "changes": "Import relocation only.",
+      "verified_definition_count": 1
+    },
+    {
+      "original": "hdmg_hot_update_v6.py",
+      "destination": "violas/retrieval/hdmg_update.py",
+      "changes": "Import relocation only.",
+      "verified_definition_count": 2
+    },
+    {
+      "original": "embedding_hdmg.py",
+      "destination": "violas/retrieval/embedding_hdmg.py",
+      "changes": "Import relocation only.",
+      "verified_definition_count": 1
+    },
+    {
+      "original": "embedding_hdmg_native.py",
+      "destination": "violas/retrieval/embedding_native.py",
+      "changes": "Import relocation only.",
+      "verified_definition_count": 1
+    },
+    {
+      "original": "incremental_vg_v6.py",
+      "destination": "violas/retrieval/incremental.py",
+      "changes": "Import relocation only.",
+      "verified_definition_count": 1
+    }
+  ]
+}

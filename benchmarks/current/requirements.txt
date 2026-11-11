@@ -1,0 +1,15 @@
+# Captured direct runtime versions from the measured Linux/Python 3.12 environment.
+numpy==2.5.4
+scipy==1.18.1
+scikit-learn==1.9.0
+pandas==3.1.0
+pillow==13.0.0
+pymilvus==3.0.1
+milvus-lite==3.2.2
+qdrant-client==1.20.0
+chromadb==1.5.9
+faiss-cpu==1.15.1
+requests==2.31.0
+tqdm==4.70.1
+# Precomputed-vector replay does not require an embedding-model download.
+# Qdrant server: 1.20.0; C++ compiler required only for embedding replay.

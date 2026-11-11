@@ -1,122 +1,110 @@
 # Violas
 
-**In-Memory Vector Group System for Entity-Centric Vector Search.**
+**Intent-guided vector retrieval over entities, micro-clusters and object facets.**
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
-[![Python](https://img.shields.io/badge/Python-3.9--3.11-blue.svg)](https://www.python.org/)
 
-Violas is an in-memory vector group system for entity-centric vector search. Modern vector
-databases typically store each item as an embedding and retrieve approximate
-nearest neighbors in the embedding space. This is effective when embedding
-proximity is enough, but it treats each vector as an independent searchable
-object and leaves richer semantic information outside the retrieval model.
+[Quick start](#install-and-try-the-integrated-library) · [Typical cases](#typical-cases) · [Data and query execution](#data-and-query-execution) · [Experiments](#experiments)
 
-Violas addresses this gap with **VectorGroup**, a semantic-first storage
-abstraction that keeps semantic entities, diverse representations, member
-embeddings, and object-level dependencies together. On top of this structure,
-**HDMG** indexes micro-clusters with heterogeneous traversal edges to support
-efficient semantic search.
+<sub>Click any figure to view it at full resolution.</sub>
 
-## Outline
-
-- [Why Violas?](#why-violas)
-- [Typical Cases](#typical-cases)
-- [How It Works](#how-it-works)
-- [Experiments](#experiments)
-- [API Overview](#api-overview)
-- [Quick Start](#quick-start)
-- [Installation Options](#installation-options)
-- [Repository Layout](#repository-layout)
-- [Reproducing Benchmarks](#reproducing-benchmarks)
-
-## Why Violas?
-
-### From Vector Search to Semantic Search
+This repository contains the Violas research implementation. It
+executes a query embedding together with a structured intent: entity scope,
+hard facet constraints, relevance weights and optional facet coverage quotas.
+VectorGroup organizes objects by entity and geometric micro-clusters; HDMG and
+facet directories guide conditional retrieval.
 
 <p align="center">
-  <img src="docs/figures/readme/paradigm.png" width="620" alt="Violas retrieval paradigm">
+  <a href="docs/figures/current/Intent-Paradigm-ICDE-single-v2.png"><img src="docs/figures/current/Intent-Paradigm-ICDE-single-v2.png" width="680" alt="Intent-guided retrieval"></a>
 </p>
 
-Existing vector search systems primarily organize and access data through
-embedding proximity. This design is scalable, but it struggles when the query
-requires semantic information that cannot be reduced to nearest-neighbor
-distance alone. Filters, rerankers, and application-side dependency recovery can
-help, but they still depend on the candidates returned by flat vector search.
+The diagram illustrates a request, not a measured result. Natural-language
+parsing is an optional upstream step. The reported benchmark uses frozen
+structured plans, so it isolates retrieval from LLM accuracy and API latency.
 
-Following the paper's semantic-search formulation, Violas extends vector search
-to support results that:
+## Install and try the integrated library
 
-- stay consistent with the intended semantic entity, such as a class, topic, or
-  document
-- cover diverse representations within that entity
-- include dependent objects, such as adjacent chunks, temporal neighbors, or
-  cross-modal evidence
+```bash
+git clone https://github.com/AgentCombo/Violas.git
+cd Violas
+python -m benchmarks.current.run verify
+```
 
-The examples below show the practical retrieval failures that motivate these
-requirements and the corresponding retrieval capabilities Violas supports:
+Verification needs only Python's standard library. To execute the real
+selector and HDMG on small synthetic cases, checked against exhaustive answers:
 
-- **Semantic-consistent retrieval**: retrieve results that stay consistent with the
-  intended semantic entity. See [Entity Mismatch](#entity-mismatch).
-- **Diversity-driven retrieval**: cover multiple poses, chunks, or local modes
-  within the same entity. See [Diversity Loss](#diversity-loss).
-- **Dependency-expanded retrieval**: expand a hit to linked context or temporal
-  neighbors. See [Dependency Loss](#dependency-loss).
-- **Cross-modal retrieval**: retrieve paired evidence across modalities. See
-  [Cross-Modal Retrieval](#cross-modal-retrieval).
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -e .
+python -m examples.intent_retrieval
+python -m benchmarks.current.run demo
+python -m benchmarks.current.run test
+```
 
-See [Vector Group](#vector-group) for how Violas stores this structure and
-[HDMG Indexing](#hdmg-indexing) for how it is indexed efficiently.
+Full benchmarks target Linux/Python 3.12 and require prepared datasets,
+vector caches and database collections. See [benchmark commands](benchmarks/current/README.md)
+for dependencies and execution options.
 
 ## Typical Cases
 
-The examples below correspond to the native capabilities evaluated in the
-paper: semantic-consistent retrieval, diversity-driven retrieval,
-dependency-expanded retrieval, and cross-modal retrieval. We show them through
-common flat-retrieval failure modes: entity mismatch, diversity loss,
-dependency loss, and broken cross-modal retrieval.
+These case studies illustrate entity consistency, diversity, linked evidence,
+and cross-modal pairing. The current measured workloads and results are
+described in [Experiments](#experiments).
 
 ### Entity Mismatch
 
 Flat nearest-neighbor search can drift into a different semantic entity. Violas
 routes by semantic entity first, then ranks local members.
 
-Some wrong neighbors look plausible because they share coarse traits with the
-query, but they still violate the intended entity. More interestingly, some
-nearest neighbors are embedding-close without a clear category-level or visual
-relation to the query.
+#### Plausible Entity Mismatch
+
+Some wrong neighbors are visually or textually plausible because they share
+coarse traits with the query, but they still violate the intended entity.
 
 <table>
   <tr>
     <td width="50%" align="center" valign="top">
-      <img src="docs/figures/readme/case-1-1.jpg" width="390" alt="Rhinoceros query retrieves visually similar but semantically wrong large animals"><br>
+      <a href="docs/figures/readme/case-1-1.jpg"><img src="docs/figures/readme/previews/case-1-1.jpg" width="360" alt="Rhinoceros query retrieves visually similar but semantically wrong large animals"></a><br>
       <sub>Rhinoceros: large-animal shape is not enough</sub>
     </td>
     <td width="50%" align="center" valign="top">
-      <img src="docs/figures/readme/case-1-2.jpg" width="390" alt="Anchor query retrieves symbols and tools that share low-level shape features"><br>
+      <a href="docs/figures/readme/case-1-2.jpg"><img src="docs/figures/readme/previews/case-1-2.jpg" width="360" alt="Anchor query retrieves symbols and tools that share low-level shape features"></a><br>
       <sub>Anchor: abstract shape should not override entity meaning</sub>
     </td>
   </tr>
   <tr>
-    <td width="50%" align="center" valign="top">
-      <img src="docs/figures/readme/case-2-4.jpg" width="390" alt="Pigeon query retrieves visually related but fine-grained wrong targets"><br>
-      <sub>Pigeon: fine-grained category identity is not preserved</sub>
+     <td width="50%" align="center" valign="top">
+      <a href="docs/figures/readme/case-1-3.jpg"><img src="docs/figures/readme/previews/case-1-3.jpg" width="360" alt="Platypus query retrieves visually similar aquatic animals instead of the intended entity"></a><br>
+      <sub>Platypus: coarse appearance is not enough</sub>
     </td>
     <td width="50%" align="center" valign="top">
-      <img src="docs/figures/readme/case-1-4.jpg" width="390" alt="Stegosaurus query retrieves creatures with similar texture or shape but different semantics"><br>
+      <a href="docs/figures/readme/case-1-4.jpg"><img src="docs/figures/readme/previews/case-1-4.jpg" width="360" alt="Stegosaurus query retrieves creatures with similar texture or shape but different semantics"></a><br>
       <sub>Stegosaurus: semantic identity should dominate</sub>
     </td>
   </tr>
+</table>
+
+
+#### Unjustified Entity Mismatch
+
+Some nearest neighbors are embedding-close without a clear category-level or
+visual relation to the query. These cases expose a stronger form of entity
+mismatch than visually plausible drift.
+
+<table>
   <tr>
     <td width="50%" align="center" valign="top">
-      <img src="docs/figures/readme/case-2-1.jpg" width="390" alt="Ant query retrieves unrelated visual concepts under flat vector search"><br>
+      <a href="docs/figures/readme/case-2-1.jpg"><img src="docs/figures/readme/previews/case-2-1.jpg" width="360" alt="Ant query retrieves unrelated visual concepts under flat vector search"></a><br>
       <sub>Ant: entity identity is not preserved</sub>
     </td>
     <td width="50%" align="center" valign="top">
-      <img src="docs/figures/readme/case-2-2.jpg" width="390" alt="Wristwatch query retrieves unrelated small objects with low-level visual overlap"><br>
+      <a href="docs/figures/readme/case-2-3.jpg"><img src="docs/figures/readme/previews/case-2-3.jpg" width="360" alt="Wristwatch query retrieves unrelated small objects with low-level visual overlap"></a><br>
       <sub>Wristwatch: embedding proximity is not enough</sub>
     </td>
   </tr>
 </table>
+
 
 
 ### Diversity Loss
@@ -128,25 +116,17 @@ scene layouts under the same semantic entity.
 <table>
   <tr>
     <td width="50%" align="center" valign="top">
-      <img src="docs/figures/readme/case-3-1.jpg" width="390" alt="Bird diversity case: retrieval should expose multiple useful views within the same bird target"><br>
+      <a href="docs/figures/readme/case-3-1.jpg"><img src="docs/figures/readme/previews/case-3-1.jpg" width="360" alt="Bird retrieval covering multiple views within the same entity"></a><br>
       <sub>Bird: one entity, multiple useful views</sub>
     </td>
     <td width="50%" align="center" valign="top">
-      <img src="docs/figures/readme/case-3-2.jpg" width="390" alt="Airplane coverage case: retrieval should cover different flight configurations and scene compositions under the same entity"><br>
+      <a href="docs/figures/readme/case-3-2.jpg"><img src="docs/figures/readme/previews/case-3-2.jpg" width="360" alt="Airplane coverage case: retrieval should cover different flight configurations and scene compositions under the same entity"></a><br>
       <sub>Airplane: cover flight configurations and scenes</sub>
     </td>
   </tr>
-  <tr>
-    <td width="50%" align="center" valign="top">
-      <img src="docs/figures/readme/case-3-3.jpg" width="390" alt="Leopard diversity case: retrieval should cover different poses and body layouts"><br>
-      <sub>Leopard: cover poses and body layouts</sub>
-    </td>
-    <td width="50%" align="center" valign="top">
-      <img src="docs/figures/readme/case-3-4.jpg" width="390" alt="Gramophone diversity case: retrieval should cover structural variations and viewing conditions"><br>
-      <sub>Gramophone: cover structural variations and viewing conditions</sub>
-    </td>
-  </tr>
 </table>
+
+
 
 ### Dependency Loss
 
@@ -159,17 +139,19 @@ lose the dependency between setup, evidence, and conclusion.
 <table>
   <tr>
     <td width="50%" align="center" valign="top">
-      <img src="docs/figures/readme/case-5-1.jpg" width="390" alt="Norfloxacin query needs linked evidence rather than isolated clinical-trial chunks"><br>
+      <a href="docs/figures/readme/case-5-1.jpg"><img src="docs/figures/readme/previews/case-5-1.jpg" width="360" alt="Norfloxacin query needs linked evidence rather than isolated clinical-trial chunks"></a><br>
       <sub>Norfloxacin: trial evidence should be retrieved as a chain</sub>
     </td>
     <td width="50%" align="center" valign="top">
-      <img src="docs/figures/readme/case-5-2.jpg" width="390" alt="Candidiasis treatment query needs individualized therapy context rather than isolated symptom or drug fragments"><br>
+      <a href="docs/figures/readme/case-5-2.jpg"><img src="docs/figures/readme/previews/case-5-2.jpg" width="360" alt="Candidiasis treatment query needs individualized therapy context rather than isolated symptom or drug fragments"></a><br>
       <sub>Candidiasis: treatment choices need patient context</sub>
     </td>
   </tr>
 </table>
 
-### Cross-Modal Retrieval
+
+
+### Cross-Modal Evidence
 
 Some retrieval tasks need paired evidence across modalities, such as a caption
 and its corresponding image. Violas keeps these modality links inside the same
@@ -178,283 +160,96 @@ retrieval object instead of reconstructing them after a flat vector search.
 <table>
   <tr>
     <td width="50%" align="center" valign="top">
-      <img src="docs/figures/readme/case-4-1.jpg" width="390" alt="COCO multimodal query about a woman cutting a large white sheet cake"><br>
+      <a href="docs/figures/readme/case-4-1.jpg"><img src="docs/figures/readme/previews/case-4-1.jpg" width="360" alt="COCO multimodal query about a woman cutting a large white sheet cake"></a><br>
       <sub>Sheet cake: text query aligned with image evidence</sub>
     </td>
     <td width="50%" align="center" valign="top">
-      <img src="docs/figures/readme/case-4-2.jpg" width="390" alt="COCO multimodal query about a motorbike on a dirt road in the countryside"><br>
+      <a href="docs/figures/readme/case-4-2.jpg"><img src="docs/figures/readme/previews/case-4-2.jpg" width="360" alt="COCO multimodal query about a motorbike on a dirt road in the countryside"></a><br>
       <sub>Motorbike: scene-level text and image agreement</sub>
     </td>
   </tr>
   <tr>
     <td width="50%" align="center" valign="top">
-      <img src="docs/figures/readme/case-4-3.jpg" width="390" alt="COCO multimodal query about a girl holding a cat and wearing a colorful skirt"><br>
+      <a href="docs/figures/readme/case-4-3.jpg"><img src="docs/figures/readme/previews/case-4-3.jpg" width="360" alt="COCO multimodal query about a girl holding a cat and wearing a colorful skirt"></a><br>
       <sub>Girl with cat: paired visual and caption evidence</sub>
     </td>
     <td width="50%" align="center" valign="top">
-      <img src="docs/figures/readme/case-4-4.jpg" width="390" alt="COCO multimodal query about a girl preparing to blow out a candle"><br>
+      <a href="docs/figures/readme/case-4-4.jpg"><img src="docs/figures/readme/previews/case-4-4.jpg" width="360" alt="COCO multimodal query about a girl preparing to blow out a candle"></a><br>
       <sub>Candle: multimodal evidence keeps context intact</sub>
     </td>
   </tr>
 </table>
 
-## How It Works
-
-### Vector Group
+## Data and query execution
 
 <p align="center">
-  <img src="docs/figures/readme/vectorgroup.png" width="720" alt="Vector Group structure">
+  <a href="docs/figures/current/Object-Matrix-ICDE-v6.png"><img src="docs/figures/current/Object-Matrix-ICDE-v6.png" width="680" alt="Object matrix"></a>
 </p>
 
-`VectorGroup` is the semantic-first storage abstraction behind Violas. It stores
-the semantic information required by semantic search together with the objects
-and embeddings. Each vector group is organized as a three-level structure:
-
-| Layer | Role |
-| --- | --- |
-| Group header | Stores the semantic key and group-level semantic vector, giving retrieval an entity-level entry point. |
-| Micro-clusters | Organize member objects that exhibit diverse local representations within the same entity. |
-| Members | Store concrete objects, embeddings, metadata, and object-level dependency relations. |
-
-This lets one entity, such as a class, document, event, or multimodal item, be
-managed as one retrieval object instead of a loose collection of independent
-embeddings.
-
-### Retrieval Modes
-
-The same `VectorGroup` structure supports multiple retrieval modes by changing
-the retrieval scope, output granularity, and expansion policy. A query first
-enters candidate groups through an explicit key or a group-level semantic
-vector, then selects micro-clusters or members with a mixed semantic-embedding
-score. The query-controlled parameter `beta` balances semantic consistency and
-embedding proximity. When linked objects are required, selected members are
-expanded through stored relations.
+Each object has an ID, embedding, entity and facet key/value metadata. Entity
+entries point to disjoint geometric micro-clusters, which keep members and
+summaries. Hard conditions identify eligible members; the conditional engine
+uses center/member representatives, graph traversal and remaining category
+reward to schedule scoring. Exact single-facet SELECT chooses the best set
+within the retrieved candidates. A missing diversity preference reduces to
+relevance selection.
 
 <p align="center">
-  <img src="docs/figures/readme/retrieval.jpg" width="560" alt="Violas retrieval modes">
+  <a href="docs/figures/current/Entity-Cell-Graph-ICDE-single.png"><img src="docs/figures/current/Entity-Cell-Graph-ICDE-single.png" width="500" alt="Entity, cell and member structure"></a>
 </p>
 
-| Paper capability | Primary APIs | Typical output |
-| --- | --- | --- |
-| Semantic-consistent retrieval | `search_entity(...)`, `search(..., key=...)` | Results scoped to the intended entity. |
-| Diversity-driven retrieval | `create_cluster(...)`, `search_diverse(...)`, `search_with_representative_rerank(...)` | Results composed across local forms of one entity. |
-| Dependency-expanded retrieval | `add_relation(...)`, `search_dependency(...)`, `search_with_contextual_vectors(...)` | A seed hit plus linked context or evidence. |
-| Cross-modal retrieval | `add_pair_relation(...)`, `search_modal(...)`, `search_multimodal(...)` | Paired image-text or multi-view evidence. |
-
-### HDMG Indexing
-
-<p align="center">
-  <img src="docs/figures/readme/HDMG.png" width="560" alt="HDMG structure">
-</p>
-
-On top of `VectorGroup`, Violas builds **HDMG** (Hierarchical Diversified Micro
-Cluster Graph), an index for efficient semantic search over vector groups. HDMG
-indexes micro-clusters because they are the main searchable units and preserve
-both semantic and embedding coherence. It uses heterogeneous traversal edges:
-
-- embedding edges preserve proximity between micro-clusters
-- semantic edges preserve reachability within the same or semantically related
-  vector groups
-- query-time navigation follows the tradeoff between semantic consistency and
-  embedding proximity
+The implementation builds geometric micro-clusters within each entity.
+Facet postings and cell summaries support filtering and query navigation.
 
 ## Experiments
 
-![Violas Benchmark Overview](docs/figures/benchmarks/overview_grid.png)
+We evaluate six datasets with 100 fixed queries per dataset and top-3 answers,
+comparing Violas with Milvus, Qdrant and Chroma.
 
-Violas is evaluated on six image and text datasets. Following the paper, we
-compare Violas with three popular vector databases: Milvus, Qdrant, and Chroma.
-We also study the performance differences between Violas and Violas without
-HDMG (w/o HDMG). For system performance, we measure query latency and the
-operation time of data and index maintenance.
-
-<p align="center">
-  <img src="docs/figures/benchmarks/table2.jpg" width="920" alt="Comparison of average Mixed Recall@3, Mixed NDCG@3, and query latency under different beta">
-  <br>
-  <sub>Comparison of average Mixed Recall@3, Mixed NDCG@3, and query latency under different &beta;.</sub>
-</p>
+**Conditional retrieval.** Violas achieves a mean objective ratio of
+0.999972–1.000000 across the six datasets. The comparison covers all-match
+prefiltering, ANN postfiltering and filtered ANN, using the same final selector.
 
 <p align="center">
-  <img src="docs/figures/benchmarks/table3.jpg" width="920" alt="Average operation time for data and index maintenance">
-  <br>
-  <sub>Average operation time for data and index maintenance.</sub>
+  <a href="docs/figures/current/rq2-tradeoff-20261111.png"><img src="docs/figures/current/rq2-tradeoff-20261111.png" width="680" alt="Conditional quality/latency"></a>
 </p>
 
-What this shows:
+**Pure embedding retrieval.** We report Recall@3 against exact cosine search
+and query latency, without intent or facet selection.
 
-- Violas improves average Mixed Recall@3 and Mixed NDCG@3 by 40.3% and 30.0%
-  over representative vector-search baselines.
-- Violas achieves the lowest query latency and maintenance operation time.
+<p align="center">
+  <a href="docs/figures/current/rq3-embedding-20261111.png"><img src="docs/figures/current/rq3-embedding-20261111.png" width="500" alt="Pure embedding results"></a>
+</p>
 
-The benchmark environment uses an Intel Xeon Platinum 8350C CPU (2.60 GHz),
-16 CPU cores, and 64 GB RAM. Image embeddings use CLIP ViT-B/32 and text
-embeddings use Sentence-Transformers all-MiniLM-L6-v2 in the benchmark
-pipelines.
+**Build and CRUD.** Violas has the lowest recorded empty-to-ready build time
+on these six datasets; individual CRUD operations vary by dataset and backend.
 
-More details:
+See [benchmark commands](benchmarks/current/README.md) to run the experiments.
+The repository includes [fixed query plans](benchmarks/current/workloads/) and
+[raw recorded results](benchmarks/current/results/) for checking the figures.
 
-- [Benchmark Results](docs/results.md)
-- [Benchmark Notes](docs/benchmark.md)
-- [Data Format](docs/data_format.md)
+## Repository map
 
-## API Overview
+| Path | Purpose |
+| --- | --- |
+| `violas/retrieval/` | Integrated intent execution, SELECT, HDMG, summaries and incremental maintenance |
+| `benchmarks/current/runtime/` | Experiment runners, VDB adapters and historical import compatibility |
+| `benchmarks/current/run.py` | Explicit, tested artifact entry points |
+| `benchmarks/current/results/` | Compressed per-query records and source hashes |
+| `docs/figures/current/` | Supplied ICDE PDFs and direct PNG renders |
+| `violas/storage/` | Existing VectorMap/VectorGroup storage and relation APIs |
+| `benchmarks/caltech/`, etc. | Older benchmark pipelines, retained for compatibility |
 
-Violas exposes the high-level retrieval capabilities described in the paper,
-and backs them with concrete system APIs for object lifecycle management, index
-construction, relation maintenance, query execution, and inspection. The goal is
-to make the research abstraction usable as an implemented retrieval system, not
-only as paper pseudocode.
+The measured engine now lives in the installable `violas.retrieval` package.
+Use `from violas import IntentIndex` for a query embedding plus a resolved plan;
+see [the runnable example](examples/intent_retrieval.py) and [API](docs/api.md).
+The benchmark imports this same core through thin compatibility aliases.
+Existing `VectorMap.search_hdmg` and relation APIs retain their behavior.
 
-### Implemented System Surface
+## Reproducibility and license
 
-| Area | APIs | What it covers |
-| --- | --- | --- |
-| Create / insert | `create_group(...)`, `insert(...)`, `insert_object(...)`, `add_vector(...)`, `add_vector_list(...)` | Create semantic groups and insert individual or batched objects. |
-| Read / access | `get(...)`, `get_all_keys(...)`, `get_group_by_name(...)`, `get_group_by_id(...)` | Access stored keys, metadata, groups, and group contents. |
-| Update / move | `update(...)`, `update_object(...)`, `assign(...)`, `assign_object(...)` | Update object embeddings or metadata and move objects across groups. |
-| Delete | `delete(...)`, `delete_object(...)` | Remove stored objects by reference. |
-| Index construction | `build_index(...)`, `build_rep_index(...)`, `build_single_index(...)`, `set_key_vectors(...)`, `build_hdmg(...)`, `get_last_hdmg_search_stats(...)` | Build member indexes, representative indexes, semantic key state, and HDMG. |
-| Relation management | `VectorRef`, `VectorRelation`, `add_relation(...)`, `remove_relation(...)`, `add_pair_relation(...)`, `add_tree_relation(...)`, `get_relations(...)` | Maintain context, temporal, hierarchy, dependency, and multimodal links. |
-| Query execution | `search(...)`, `search_entity(...)`, `search_diverse(...)`, `search_dependency(...)`, `search_modal(...)`, `search_hdmg(...)` | Run standard, scoped, diverse, relation-aware, multimodal, and HDMG-backed retrieval. |
-| Inspection | `get_all_keys(...)`, `get_group_by_name(...)`, `get_statistics(...)`, `analyze_relationships(...)` | Inspect stored keys, groups, index state, and relation coverage. |
-
-Example: object lifecycle and relation setup:
-
-```python
-ref = vm.insert_object("paper-001", query_vec, {"text": "middle segment"})
-ctx = vm.insert_object("paper-001", context_vec, {"text": "previous segment"})
-vm.add_relation(ref, ctx, relation_type="context")
-vm.update(ref, description={"section": "clinical evidence"})
-```
-
-Example: build indexes and run structured retrieval:
-
-```python
-vm.set_key_vectors(key_vectors)
-vm.build_index()
-vm.build_hdmg()
-
-results = vm.search_hdmg(query_vector, query_key_vector=semantic_embedding, top_k=5)
-context = vm.search_dependency(query_vector, relation_types=["context"], top_k=5)
-```
-
-For the fuller method list and retrieval patterns, see [docs/api.md](docs/api.md).
-
-## Quick Start
-
-Install the package in editable mode:
-
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -e .
-```
-
-If you want the packaged core library from PyPI later, the distribution name is
-`violas`.
-
-Run the minimal example. It uses synthetic vectors and does not require any
-dataset, embedding model, or external vector database:
-
-```bash
-python examples/minimal_vectormap.py
-```
-
-Minimal API usage:
-
-```python
-import numpy as np
-
-from violas import VectorMap
-
-vectors = [np.random.rand(4) for _ in range(5)]
-vm = VectorMap()
-vm.create_group(
-    key="example",
-    group_name="demo",
-    representative=np.mean(vectors, axis=0),
-    rep_description="demo representative",
-    vectors=vectors,
-    descriptions=[{"text": f"item {i}"} for i in range(5)],
-    vector_type="demo",
-    group_type="synthetic",
-)
-
-query = np.random.rand(4)
-results = vm.search_entity(query, key="example", top_k=3)
-for rank, result in enumerate(results, start=1):
-    text = result.group.descriptions[result.vector_idx]["text"]
-    print(f"{rank}. key={result.key} distance={result.distance:.4f} text={text}")
-```
-
-## Installation Options
-
-For quick library experiments, install only the minimal dependencies shown in
-[Quick Start](#quick-start). If you only need FAISS-backed local indexing in
-the core package, install the optional FAISS extra:
-
-```bash
-pip install -e ".[faiss]"
-```
-
-The full benchmark suite uses additional embedding models and external vector
-database baselines. For the full benchmark environment:
-
-```bash
-pip install -r requirements.txt
-pip install -e .
-```
-
-The benchmark dependencies include optional-heavy packages such as CLIP,
-Sentence-Transformers, FAISS, Milvus Lite, Qdrant, and Chroma because the
-benchmark suite compares Violas with external vector database baselines.
-
-## Repository Layout
-
-```text
-Violas/
-  violas/
-    storage/       # VectorMap, VectorGroup, relation helpers
-    core/          # feature helpers, recall utilities, baseline indexes
-  benchmarks/      # six benchmark pipelines plus diversity cases
-  examples/        # small runnable examples
-  scripts/         # benchmark wrapper scripts
-  docs/            # API notes, data formats, benchmark results, README figures
-```
-
-## Reproducing Benchmarks
-
-The shell scripts assume a workspace where `Violas/` and `dataset/` are
-siblings. Override the dataset variables if your data lives elsewhere.
-
-```bash
-bash scripts/run_bench_all.sh
-bash scripts/run_bench_vision.sh
-bash scripts/run_bench_text.sh
-bash scripts/run_diversity_case.sh
-```
-
-Vision dataset variables:
-
-- `CALTECH_ROOT`
-- `CUB_ROOT`
-- `COCO_ROOT`
-- `COCO_JSON`
-
-Text dataset variables:
-
-- `NEWS20_ROOT`
-- `OHSUMED_ROOT`
-- `YAHOO_ROOT`
-
-Saved artifacts are written under `outputs/<benchmark>/` by default. External
-vector database baselines are disabled by default for portability. To enable
-them:
-
-```bash
-export VIOLAS_ENABLE_EXTERNAL_DBS=1
-```
-
-## License
-
-Apache License 2.0 - See [LICENSE](LICENSE)
+Original source and result hashes, packaging edits, and actual validation
+outcomes are recorded under `benchmarks/current/`. Replaying frozen plans does
+not require an API key. Optional schema/intent generation reads credentials
+from the environment. Raw datasets, API credentials, caches and database files
+are not checked in. Code is released under [Apache-2.0](LICENSE).
